@@ -173,6 +173,11 @@ vorgehalten werden, bei „nein“ ist das Geschoss praktisch sofort am Ziel.
 
 - **Kulisse**: flämisches Winterdorf nach Brueghel d. J. – fahl-gelblicher Himmel (Variante: Abenddämmerung), zugefrorener Flusslauf mit Schlittschuhläufern, Backstein- und Lehmhäuser mit verschneiten Dächern und Kaminrauch, Kirche, Kopfweiden, kahle Bäume mit Krähen, Vogelfalle, Zaun, leichter Schneefall, erhöhter Standpunkt.
 - **Ziele**: Kinder tauchen hinter Zaun, Schneehaufen und Hausecken auf; das Ergebnis steht auf der Wollmütze.
+- **Verstecke hinter Bäumen**: Ein Versteck hinter einem Baum ist erlaubt, wenn höchstens 30 % des Kinderkörpers verdeckt sind (`MAX_HIDDEN_SHARE`).
+- **Gesicht immer sichtbar**: Ist das Gesicht verdeckt, wird das Versteck verworfen, unabhängig vom Anteil.
+- **Nur sichtbare Verstecke**: Bei jeder Welle werden nur Verstecke gewählt, deren Kind im aktuellen Bildausschnitt liegt (Randabstand `VIEW_MARGIN`); das hängt vom Seitenverhältnis des Fensters ab.
+  Die Kinder einer Welle stehen an verschiedenen Verstecken.
+- **Prüfung beim Aufbau**: Die Sichtlinien von der Kamera zu Punkten auf dem Körper werden einmal beim Aufbau geprüft; ungeeignete Verstecke werden entfernt.
 - **Richtig**: Kind lacht und kippt nach hinten in den Schnee (Schneewolke). **Falsch**: Kind guckt ulkig (schielt, Zunge) und duckt sich weg.
 
 ### 7.3 Schnittstelle für neue Szenarien

@@ -5,6 +5,17 @@ import * as THREE from 'three';
 import { fbm, mulberry, makeLabel } from '../engine.js';
 import { audio } from '../audio.js';
 
+// Sichtprüfung für Verstecke: Körperhöhen (m über Boden) und Breite (m) der Abtastpunkte.
+const KID_SAMPLE_HEIGHTS = [0.4, 1.0, 1.6, 2.1];
+const KID_SAMPLE_OFFSETS = [-0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45];
+const FACE_HEIGHT = KID_SAMPLE_HEIGHTS[KID_SAMPLE_HEIGHTS.length - 1];   // oberster Abtastpunkt = Gesicht
+// Höchstanteil des Körpers, der hinter Bäumen verschwinden darf (Spielgefühl: „halb versteckt“ ist ok).
+const MAX_HIDDEN_SHARE = 0.3;
+// Sichtfeld-Prüfung: Kopfhöhe des Kindes (m über Boden), halbe Breite (m) und Randabstand in NDC.
+const KID_HEAD_HEIGHT = 3.0;
+const KID_HALF_WIDTH = 0.7;
+const VIEW_MARGIN = 0.9;
+
 const COATS = [0x8c2f24, 0x2f4f6b, 0x7a6a2c, 0x3f5f3a, 0x6b3a55, 0x9a5a22];
 const HATS = [0xb5302a, 0x1f5a8a, 0x2e7a44, 0x8a3a8a, 0xc27a12, 0x3a3a3a];
 
@@ -44,6 +55,7 @@ export class SnowScenario {
     this.tempo = opts.tempo || 1;
     this.variant = opts.variant || 0;
     this.targets = [];
+    this.trees = [];          // Bäume: verdecken Verstecke, siehe _pruneHiddenSpots
     this.wave = 0;
     this.onEscape = null;
     this.sway = { yaw: 0.14, pitch: 0.05 };
@@ -229,6 +241,40 @@ export class SnowScenario {
     camera.fov = 55; camera.updateProjectionMatrix();
     camera.position.set(0, this.groundAt(0, 0) + 3.6, 0);      // erhöhter Standpunkt wie im Gemälde
     camera.lookAt(0, 1.2, -22);
+    this._pruneHiddenSpots();
+  }
+
+  // Verstecke hinter einem Baum sind erlaubt, solange das Kind größtenteils sichtbar
+  // bleibt. Das Gesicht darf nie verdeckt sein, sonst ist die Antwort nicht zu sehen.
+  // Sichtlinien: Kamera -> Punkte auf dem Körper des Kindes.
+  _pruneHiddenSpots() {
+    const { scene, camera } = this.e;
+    scene.updateMatrixWorld(true);
+    const ray = new THREE.Raycaster();
+    const blocked = (point) => {
+      const dir = point.clone().sub(camera.position);
+      const dist = dir.length();
+      ray.set(camera.position, dir.normalize());
+      const hit = ray.intersectObjects(this.trees, true)[0];
+      return !!hit && hit.distance < dist - 0.3;
+    };
+    const hidden = (spot) => {
+      const ground = this.groundAt(spot.x, spot.z);
+      let total = 0, count = 0;
+      for (const h of KID_SAMPLE_HEIGHTS) {
+        for (const dx of KID_SAMPLE_OFFSETS) {
+          const p = new THREE.Vector3(spot.x + dx, ground + h, spot.z);
+          const isBlocked = blocked(p);
+          if (h === FACE_HEIGHT && dx === 0 && isBlocked) return true;   // Gesicht verdeckt
+          total += isBlocked ? 1 : 0;
+          count++;
+        }
+      }
+      return total / count > MAX_HIDDEN_SHARE;
+    };
+    const before = this.spots.length;
+    this.spots = this.spots.filter((s) => !hidden(s));
+    if (this.spots.length < before) console.info(`Schneeballschlacht: ${before - this.spots.length} verdeckte Verstecke entfernt`);
   }
 
   _hut(x, z, w, d, rot, wall, rnd) {
@@ -278,6 +324,7 @@ export class SnowScenario {
     const knob = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7 * s, 0), bark); knob.position.y = 2.8 * s; knob.castShadow = true;
     const cap = new THREE.Mesh(new THREE.SphereGeometry(0.62 * s, 8, 5, 0, 7, 0, 1.3), new THREE.MeshLambertMaterial({ color: 0xf4f6f8 })); cap.position.y = 3.0 * s;
     grp.add(trunk, knob, cap);
+    this.trees.push(grp);
     const twig = new THREE.MeshLambertMaterial({ color: 0x6a4a2c });
     for (let i = 0; i < 26; i++) {
       const len = (1.6 + rnd() * 1.6) * s;
@@ -314,6 +361,7 @@ export class SnowScenario {
       }
     };
     branch(new THREE.Vector3(), new THREE.Vector3(0, 1, 0), h * 0.45, h * 0.045, 0);
+    this.trees.push(grp);
     grp.position.set(x, this.groundAt(x, z) - 0.1, z);
     this.e.scene.add(grp);
   }
@@ -352,18 +400,45 @@ export class SnowScenario {
     return { group: grp, face, arms, label };
   }
 
+  // Verstecke, deren Kind im aktuellen Bildausschnitt liegt (hängt vom Seitenverhältnis ab).
+  _visibleSpots() {
+    const { camera } = this.e;
+    camera.updateMatrixWorld(true);
+    const p = new THREE.Vector3();
+    const inView = (x, y, z) => { p.set(x, y, z).project(camera); return p.z < 1 && Math.abs(p.x) <= VIEW_MARGIN && Math.abs(p.y) <= VIEW_MARGIN; };
+    return this.spots.filter((s) => {
+      const y = this.groundAt(s.x, s.z) + KID_HEAD_HEIGHT;
+      return inView(s.x - KID_HALF_WIDTH, y, s.z) && inView(s.x + KID_HALF_WIDTH, y, s.z);
+    });
+  }
+
+  // n verschiedene Verstecke; sichtbare zuerst, Kinder möglichst nicht direkt nebeneinander.
+  _pickSpots(n) {
+    const shuffle = (a) => a.slice().sort(() => Math.random() - 0.5);
+    const visible = this._visibleSpots();
+    const isVisible = new Set(visible);
+    // Zweite Stufe nur als Notfall: lieber verdeckt als fehlendes Kind
+    const tiers = [shuffle(visible), shuffle(this.spots.filter((s) => !isVisible.has(s)))];
+    const chosen = [];
+    const take = (list, spaced) => {
+      for (const s of list) {
+        if (chosen.length === n) return;
+        if (chosen.includes(s)) continue;
+        if (!spaced || chosen.every((c) => Math.hypot(c.x - s.x, c.z - s.z) > 3.4)) chosen.push(s);
+      }
+    };
+    for (const tier of tiers) {
+      take(tier, true);
+      take(tier, false);                              // Rest ohne Abstandsregel, aber nie doppelt
+    }
+    return chosen;
+  }
+
   spawnWave(labels) {
     this.wave++;
-    const free = this.spots.map((_, i) => i).sort(() => Math.random() - 0.5);
-    // Kinder nicht direkt nebeneinander: Mindestabstand prüfen
-    const chosen = [];
-    for (const idx of free) {
-      const s = this.spots[idx];
-      if (chosen.every((c) => Math.hypot(c.x - s.x, c.z - s.z) > 3.4)) chosen.push(s);
-      if (chosen.length === labels.length) break;
-    }
+    const chosen = this._pickSpots(labels.length);
     labels.forEach((lab, i) => {
-      const spot = chosen[i] || this.spots[free[i]];
+      const spot = chosen[i];
       const k = this._kid(lab.text, i);
       const base = new THREE.Vector3(spot.x, this.groundAt(spot.x, spot.z) - 0.15, spot.z);
       k.group.position.copy(base).add(spot.hide);

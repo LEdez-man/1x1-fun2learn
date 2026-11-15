@@ -7,6 +7,11 @@ Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionier
 ### Hinzugefügt
 - Testlauf mit `npm test` (Node-Testrunner, `three` aus `vendor/`), erste Tests für die Versteck-Prüfung
 
+### Behoben
+- Schneeballschlacht: Die richtige Antwort ist immer zu sehen.
+  Verstecke hinter Bäumen entfallen, wenn das Gesicht des Kindes oder mehr als 30 % des Körpers verdeckt ist.
+  Kinder erscheinen nur an Verstecken im sichtbaren Bildausschnitt, auch bei schmalen Fenstern.
+
 ## [0.1.0] – 2026-11-15
 
 Erster spielbarer Stand.
