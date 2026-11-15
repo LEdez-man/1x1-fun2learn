@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ledez-man/1x1-fun2learn/data/profile.schema.json",
+  "title": "1×1 Fun2Learn – Spielerprofil",
+  "description": "Benutzer, Einstellungen, Lernstand je Aufgabe und Rundenhistorie. Entspricht der Datei, die das Menü unter „Sichern“ erzeugt und unter „Laden“ einliest.",
+  "type": "object",
+  "required": ["schema", "name", "facts"],
+  "properties": {
+    "schema": { "const": 1, "description": "Version des Datenformats" },
+    "id": { "type": "string", "description": "Interne Kennung; wird beim Import neu vergeben" },
+    "name": { "type": "string", "maxLength": 24 },
+    "created": { "type": "string", "format": "date-time" },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "range": { "enum": ["small", "big"], "description": "small = 1–10 × 1–10, big = 11–20 × 1–10" },
+        "pool": { "enum": ["mixed", "king", "rest", "rows", "hard", "errors", "custom", "auto"] },
+        "rows": { "type": "array", "items": { "type": "integer" }, "description": "Gewählte Reihen für pool = rows" },
+        "mode": { "enum": [1, 2, 3, 4], "description": "1 Ergebnis treffen, 2 Treffen & tippen, 3 Division, 4 gemischt" },
+        "scenario": { "type": "string" },
+        "need": { "enum": [2, 3, 5], "description": "So oft muss jede Aufgabe richtig sein" },
+        "tempo": { "type": "number" },
+        "lead": { "type": "boolean", "description": "Vorhalten nötig" },
+        "typeTimeout": { "type": "number", "description": "Sekunden für die Tastatureingabe" },
+        "sound": { "type": "boolean" },
+        "round": { "type": "integer", "description": "Rundenzähler; bestimmt die Kulissenvariante" }
+      }
+    },
+    "facts": {
+      "type": "object",
+      "description": "Lernstand je Aufgabe, Schlüssel \"axb\" (z. B. \"7x8\")",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "mul": { "$ref": "#/$defs/counter" },
+          "div": { "$ref": "#/$defs/counter" },
+          "type": { "$ref": "#/$defs/counter" },
+          "last": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "custom": {
+      "type": "object",
+      "description": "Auswahl im Lernraster je Zahlenraum",
+      "properties": {
+        "small": { "type": "array", "items": { "type": "string" } },
+        "big": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "recommended": {
+      "type": "object",
+      "description": "Aktuelle Übungsserie aus der letzten Auswertung",
+      "properties": {
+        "range": { "enum": ["small", "big"] },
+        "keys": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date-time" },
+          "range": { "enum": ["small", "big"] },
+          "scenario": { "type": "string" },
+          "pool": { "type": "string" },
+          "mode": { "enum": [1, 2, 3, 4] },
+          "need": { "type": "integer" },
+          "durationSec": { "type": "integer" },
+          "completed": { "type": "boolean" },
+          "gameOver": { "type": "boolean" },
+          "aborted": { "type": "boolean" },
+          "correct": { "type": "integer" },
+          "wrong": { "type": "integer" },
+          "rate": { "type": "number", "minimum": 0, "maximum": 1 },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": { "type": "string" },
+                "a": { "type": "integer" },
+                "b": { "type": "integer" },
+                "correct": { "type": "integer" },
+                "wrong": { "type": "integer" },
+                "rate": { "type": ["number", "null"] },
+                "avgMs": { "type": ["integer", "null"], "description": "Mittlere Antwortzeit der richtigen Antworten" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "counter": {
+      "type": "object",
+      "properties": {
+        "c": { "type": "integer", "description": "Anzahl richtig" },
+        "w": { "type": "integer", "description": "Anzahl falsch" },
+        "ms": { "type": "integer", "description": "Summe der Antwortzeiten der richtigen Antworten in Millisekunden" }
+      }
+    }
+  }
+}

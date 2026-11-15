@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "id": "beispiel",
+  "name": "Beispielkind",
+  "created": "2026-11-15T15:00:00.000Z",
+  "settings": {
+    "range": "small", "pool": "king", "rows": [2], "mode": 1, "scenario": "turkey",
+    "need": 3, "tempo": 1, "lead": true, "typeTimeout": 3, "sound": true, "round": 1
+  },
+  "facts": {
+    "2x5": { "mul": { "c": 3, "w": 0, "ms": 6900 }, "last": "2026-11-15T15:04:10.000Z" },
+    "5x7": { "mul": { "c": 3, "w": 1, "ms": 9800 }, "last": "2026-11-15T15:05:02.000Z" },
+    "7x8": { "mul": { "c": 1, "w": 3, "ms": 5200 }, "div": { "c": 0, "w": 1, "ms": 0 }, "last": "2026-11-15T15:06:40.000Z" }
+  },
+  "custom": { "small": ["7x8", "8x7", "6x7"], "big": [] },
+  "recommended": { "range": "small", "keys": ["7x8"] },
+  "sessions": [
+    {
+      "date": "2026-11-15T15:07:00.000Z", "range": "small", "scenario": "turkey", "pool": "custom",
+      "mode": 1, "need": 3, "durationSec": 212, "completed": true, "gameOver": false, "aborted": false,
+      "correct": 7, "wrong": 4, "rate": 0.636,
+      "items": [
+        { "key": "2x5", "a": 2, "b": 5, "correct": 3, "wrong": 0, "rate": 1, "avgMs": 2300 },
+        { "key": "5x7", "a": 5, "b": 7, "correct": 3, "wrong": 1, "rate": 0.75, "avgMs": 3267 },
+        { "key": "7x8", "a": 7, "b": 8, "correct": 1, "wrong": 3, "rate": 0.25, "avgMs": 5200 }
+      ]
+    }
+  ]
+}

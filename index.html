@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>1×1 Fun2Learn</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+</head>
+<body>
+
+<!-- ===================== Hauptmenü ===================== -->
+<main id="menu" class="screen">
+  <header class="top">
+    <h1>1×1 <span>Fun2Learn</span></h1>
+    <div class="profile">
+      <label for="profileSel">Spieler</label>
+      <select id="profileSel"></select>
+      <button id="btnNewProfile" class="ghost" title="Neuen Spieler anlegen">＋</button>
+      <button id="btnStats" class="ghost">Lernstand</button>
+      <button id="btnExport" class="ghost" title="Profil als Datei sichern">⇩ Sichern</button>
+      <button id="btnImport" class="ghost" title="Profil aus Datei laden">⇧ Laden</button>
+      <button id="btnSound" class="ghost" title="Ton an/aus">🔊</button>
+      <input id="fileImport" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <button id="btnRecommended" class="recommended" hidden></button>
+
+  <section>
+    <h2><b>1</b> Zahlenraum</h2>
+    <div id="optRange" class="opts two"></div>
+  </section>
+
+  <section>
+    <h2><b>2</b> Welche Aufgaben?</h2>
+    <div id="optPool" class="opts"></div>
+    <div id="rowPick" class="sub" hidden></div>
+    <div id="customInfo" class="sub" hidden>
+      <span id="customCount"></span>
+      <button id="btnGrid">Lernraster öffnen</button>
+    </div>
+    <p id="poolInfo" class="info"></p>
+  </section>
+
+  <section>
+    <h2><b>3</b> Spielart</h2>
+    <div id="optMode" class="opts"></div>
+  </section>
+
+  <section>
+    <h2><b>4</b> Szenario</h2>
+    <div id="optScenario" class="opts scen"></div>
+  </section>
+
+  <section class="settings">
+    <h2><b>5</b> Einstellungen</h2>
+    <div class="row"><span>Jede Aufgabe richtig</span><div id="optNeed" class="seg"></div></div>
+    <div class="row"><span>Tempo</span><div id="optTempo" class="seg"></div></div>
+    <div class="row"><span>Vorhalten nötig</span><div id="optLead" class="seg"></div></div>
+    <div class="row"><span>Zeit zum Tippen</span><div id="optType" class="seg"></div></div>
+  </section>
+
+  <div class="startbar">
+    <button id="btnStart" class="start">▶ Los geht's</button>
+  </div>
+</main>
+
+<!-- ===================== Lernraster ===================== -->
+<main id="grid" class="screen" hidden>
+  <header class="top">
+    <h1>Lernraster <span id="gridRange"></span></h1>
+    <div class="profile">
+      <button id="gridHard" class="ghost">Schwierige markieren</button>
+      <button id="gridErrors" class="ghost">Meine Fehler markieren</button>
+      <button id="gridClear" class="ghost">Auswahl leeren</button>
+      <button id="gridDone" class="start small">Fertig</button>
+    </div>
+  </header>
+  <p class="info">Tippe Aufgaben an, die du gezielt üben willst. Die Farbe zeigt, wie sicher eine Aufgabe schon sitzt.
+    Ein Klick auf eine Zahl am Rand wählt die ganze Reihe.</p>
+  <div class="legend">
+    <span class="lg unseen">noch nicht geübt</span><span class="lg bad">unsicher</span>
+    <span class="lg mid">geht so</span><span class="lg good">sitzt</span>
+  </div>
+  <div id="gridTable"></div>
+  <p id="gridCount" class="info"></p>
+</main>
+
+<!-- ===================== Auswertung ===================== -->
+<main id="summary" class="screen" hidden>
+  <header class="top"><h1 id="sumTitle"></h1></header>
+  <div class="sumhead">
+    <div id="sumRing" class="ring"><div><b id="sumRate"></b><small>richtig</small></div></div>
+    <div id="sumFacts" class="sumfacts"></div>
+  </div>
+  <h2>So lief jede Aufgabe</h2>
+  <div id="sumBars" class="bars"></div>
+  <div id="sumRec" class="rec"></div>
+  <div class="startbar">
+    <button id="btnPlayRec" class="start" hidden>⭐ Übungsserie spielen</button>
+    <button id="btnAgain" class="start alt">↻ Nochmal</button>
+    <button id="btnMenu" class="start alt">Hauptmenü</button>
+  </div>
+</main>
+
+<!-- ===================== Spiel ===================== -->
+<div id="game" class="screen" hidden>
+  <canvas id="gl"></canvas>
+  <div id="hud">
+    <div class="hudtop">
+      <div id="progress"><div id="progressFill"></div></div>
+      <div id="score">★ 0</div>
+      <div id="lives" hidden>♥♥♥♥♥</div>
+      <button id="btnPause" title="Pause (Esc)">Ⅱ</button>
+    </div>
+    <div id="popups"></div>
+    <div id="typebox" hidden>
+      <div class="line"><span id="typeTask"></span> <span id="typeVal"></span><span class="caret">_</span></div>
+      <div class="bar"><div id="typeBar"></div></div>
+    </div>
+    <div id="prompt"></div>
+    <div id="crosshair"></div>
+    <div id="pause" hidden>
+      <div class="card">
+        <h2>Pause</h2>
+        <button id="btnResume" class="start">▶ Weiter</button>
+        <button id="btnQuit" class="start alt">Runde beenden</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
