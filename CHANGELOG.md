@@ -2,6 +2,11 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach SemVer.
 
+## [Unreleased]
+
+### Hinzugefügt
+- Testlauf mit `npm test` (Node-Testrunner, `three` aus `vendor/`), erste Tests für die Versteck-Prüfung
+
 ## [0.1.0] – 2026-11-15
 
 Erster spielbarer Stand.
