@@ -25,7 +25,7 @@ import urllib.request
 KANDIDATEN = {
     "2d": ["pixi.js", "phaser", "kaplay", "konva"],
     "3d": ["three", "@babylonjs/core", "playcanvas"],
-    "physik": ["matter-js", "planck", "@dimforge/rapier2d-compat", "@dimforge/rapier3d-compat", "cannon-es"],
+    "physik": ["planck", "@dimforge/rapier2d-compat", "@dimforge/rapier3d-compat", "matter-js", "cannon-es"],  # erste Wahl zuerst, Altbestand zuletzt
     "ton": ["howler", "tone", "zzfx"],
     "text-3d": ["troika-three-text"],
     "werkzeug": ["playwright", "vite", "@gltf-transform/cli", "sharp", "svgo"],

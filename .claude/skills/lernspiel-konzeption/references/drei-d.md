@@ -135,7 +135,8 @@ Dieselben Regeln wie in 2D, anders durchgesetzt:
 - Zielauflösung: Der Spieler zielt auf den Punkt unter dem Fadenkreuz; den
   Abschusswinkel rechnet die Engine. Schalter „Ballistik aus“ entfernt Flugzeit und
   Abfall.
-- Physikbibliothek nur, wenn viele Körper frei zusammenstoßen sollen.
+- Physikbibliothek nur, wenn viele Körper frei zusammenstoßen sollen oder Physik der
+  Lerngegenstand ist (`grafik-engine.md`, Abschnitt „Physikbibliothek: wann überhaupt“).
 
 ## 7 Leistung
 

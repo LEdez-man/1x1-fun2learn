@@ -201,6 +201,12 @@ Zuordnung:
   (Phaser).
 - 2,5D und 3D → 3D-Bibliothek (three.js) oder 3D-Engine (Babylon.js, PlayCanvas).
 
+**D2c Physik.** „Soll sich etwas physikalisch verhalten, was nicht vorab feststeht?“
+- Nein: eigene Treffertests und Flugbahnen (Empfehlung für Ziel-und-Treffer-Spiele).
+- Ja, wenige Körper oder gezielt berechnete Bahnen: eigene Integration.
+- Ja, viele frei stoßende Körper oder Physik als Lerngegenstand: Physikbibliothek
+  hinter dem Darstellungsvertrag (2D: Planck oder Rapier, 3D: Rapier; Stand prüfen).
+
 **D3 Zielgeräte und Leistung.** Schwächstes Gerät benennen (Büro-Laptop mit integrierter
 Grafik, Mittelklasse-Tablet). Daran wird gemessen.
 

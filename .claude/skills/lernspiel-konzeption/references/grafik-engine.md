@@ -141,10 +141,35 @@ leistet.
 
 | Bedarf | Empfehlung | Verworfen, weil |
 |---|---|---|
-| Kollision einfacher Körper | eigene Tests (Strecke gegen Quader, Kugel; Ericson 2005) | Physik-Engines (Rapier, cannon-es, ammo.js) sind für wenige Körper überdimensioniert |
+| Kollision einfacher Körper | eigene Tests (Strecke gegen Quader, Kugel; Ericson 2005) | Physik-Engines sind für wenige Körper überdimensioniert und machen den Ausgang einer Aufgabe vom Abprallen abhängig |
 | Ballistik | eigene Integration, geschlossene Zielauflösung | – |
 | Hinweistöne | WebAudio, synthetisch, ohne Dateien (Farnell 2010) | Tone.js ist auf Musik ausgelegt; Howler.js lohnt erst bei Samples |
 | Sprachausgabe | Web Speech API, lokale Stimmen bevorzugt, Zeitgeber-Ersatz für `onend`; vorab erzeugte Clips als möglicher Ersatz hinter derselben Funktion | Cloud-Dienste: Netz, Kosten, Datenschutz bei Kindern |
+
+### Physikbibliothek: wann überhaupt
+
+Voreinstellung: **eigene Tests und eigene Integration.** Bei Ziel-und-Treffer-Spielen
+steht der Ausgang einer Aufgabe fest und darf nicht davon abhängen, wie ein Körper
+abprallt; Trümmer und Konfetti sind Partikel, keine Körper; Tests und die Messung der
+Reaktionszeit bleiben mit festem Zeitschritt reproduzierbar.
+
+Eine Physikbibliothek kommt in Frage, wenn viele Körper frei zusammenstoßen, sich
+stapeln oder über Gelenke verbunden sind, oder wenn die Physik selbst Lerngegenstand
+ist (Waage, Hebel, schiefe Ebene, Wurfbahn). Dann gilt:
+
+- **Kriterien zusätzlich zu Abschnitt 9:** kontinuierliche Kollisionserkennung für
+  schnelle Körper (sonst fliegen Geschosse durch dünne Ziele), fester Zeitschritt und
+  Determinismus, Pflegestand, Einbindung ohne Build (reines JavaScript oder
+  WebAssembly mit Ladeaufwand), Größe.
+- **Kandidaten** (Einordnung aus Kenntnis der Projekte, Eigenschaften vor dem Einsatz
+  in der Dokumentation prüfen): 2D: Planck (Portierung von Box2D) als erste Wahl,
+  Rapier 2D als Alternative. 3D: Rapier. Matter.js und cannon-es nur als Altbestand
+  behandeln, solange das Prüfskript sie als nicht mehr gepflegt kennzeichnet; bei
+  Matter.js zusätzlich fehlende kontinuierliche Kollisionserkennung beachten.
+- Physik als eigene Schicht hinter dem Darstellungsvertrag halten; Szenarien melden
+  weiterhin nur Treffer. Der Lernkern erfährt nichts von der Physik.
+- Entscheidung mit Begründung ins Protokoll; Version festschreiben (Rapier hat
+  Versionsschema 0.x).
 
 ## 8 Was die Darstellungsschicht können muss
 
