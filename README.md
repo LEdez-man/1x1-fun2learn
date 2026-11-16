@@ -36,7 +36,9 @@ Geplante Szenarien und Erweiterungen stehen in [spec.md](spec.md), Abschnitt 9, 
 
 | Datei | Inhalt |
 |---|---|
-| [spec.md](spec.md) | Spezifikation: Spiellogik, Menü, Szenarien, Architektur, Planung |
+| [spec.md](spec.md) | Spezifikation: Spiellogik, Menü, Szenarien, Architektur, Planung, Entscheidungsprotokoll, Leitfaden für KI-gestützte Weiterarbeit |
+| [AGENTS.md](AGENTS.md) | Kurzanleitung für KI-Agenten |
+| [tests/](tests) | Browsertests (Playwright), siehe spec.md 8.2 |
 | [CHANGELOG.md](CHANGELOG.md) | Versionshistorie |
 | [assets/schneeball-bruegel/spec.md](assets/schneeball-bruegel/spec.md) | Asset-Spezifikation der Schneeballschlacht |
 | [data/profile.schema.json](data/profile.schema.json) | Datenformat für Spieler, Fortschritt und Statistik |

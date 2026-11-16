@@ -3,13 +3,19 @@
 | | |
 |---|---|
 | **Version** | 0.2.0 (Schneeballschlacht als 2D-Mehrebenen-Szene, Etappen) |
-| **Datum** | 2026-11-15 |
+| **Datum** | 2026-11-16 |
 | **Status** | Kern + 2 Szenarien umgesetzt, 5 Szenarien und Erweiterungen spezifiziert (siehe Abschnitt 9 und GitHub-Issues). Etappen und Zwischenrunden bisher nur in der Schneeballschlacht (Abschnitt 5.6), Übertragung auf weitere Szenarien nach Abschnitt 7.4. |
 | **Technik** | Statische Web-App, ES-Module, kein Build-Schritt. 2D-Szenarien: PixiJS 8.23 (WebGL); 3D-Szenario Truthahn-Skeet: three.js r170. Beide Bibliotheken liegen lokal in `vendor/`. |
 
 Dieses Dokument ist die verbindliche Beschreibung des Spiels für Menschen und für
 Werkzeuge (z. B. KI-Assistenten), die daran weiterarbeiten. Abschnitte 1–8 beschreiben
-den **umgesetzten** Stand, Abschnitt 9 den **geplanten**.
+den **umgesetzten** Stand, Abschnitt 9 den **geplanten**, Abschnitt 10 die fachliche
+Einordnung.
+
+> **Für KI-gestützte Weiterarbeit:** Zuerst Abschnitt 12 (Leitfaden mit Arbeitsablauf,
+> Konventionen und Vorlage für einen Auftrag) und Abschnitt 11 (Entscheidungen, Abwägungen
+> und Stolpersteine) lesen. Für ein neues Szenario sind außerdem 5.6 und 7.4 verbindlich.
+> Die Kurzfassung für Agenten steht in `AGENTS.md`.
 
 ---
 
@@ -371,6 +377,8 @@ js/store.js           Profile und Lernstand (localStorage, Export/Import)
 js/scenarios/*.js     Szenarien
 assets/               Grafiken der 2D-Szenarien (siehe 7.2)
 tools/                Hilfsskripte (Ebenen verbreitern)
+tests/                Browsertests mit Playwright (siehe 8.2)
+AGENTS.md, CLAUDE.md  Einstieg für KI-Werkzeuge (verweist auf diese Spezifikation)
 vendor/               three.js r170, PixiJS 8.23 (beide MIT-Lizenz)
 data/                 Datenformat und Beispielprofil
 docs/screenshots/     Bildschirmfotos
@@ -394,18 +402,30 @@ Geprüft wird mit Playwright (Chromium, Software-Rendering). Die Projektdateien 
 Request-Interception ausgeliefert; die Engine wird im Test von Hand getaktet, weil die
 Echtzeitschleife im Software-Renderer nur wenige Bilder pro Sekunde erreicht.
 
+| Skript | Prüft | Laufzeit (Software-Renderer) |
+|---|---|---|
+| `node tests/round.test.js [Bildordner]` | komplette Runde mit Etappen, Zwischenrunden, Balken, Auswertung | ca. 2–4 min |
+| `node tests/visibility.test.js [Bildordner]` | Regeln 7.4.3 in sechs Bildschirmgrößen | ca. 5–8 min |
+| `node tests/gallery.js <Bildordner>` | Bildschirmfotos aller Tageszeiten und des Sturms (Sichtprüfung) | ca. 2 min |
+
+Voraussetzung: Node.js und Playwright mit Chromium (`npm i -D playwright` und
+`npx playwright install chromium`, falls nicht vorhanden). Rückgabewert 0 = bestanden.
+Szenario-Hilfen für Tests: Aufruf mit `?debug` setzt `window.__scenario`;
+`debugKids()` liefert die Bildschirmrechtecke der sichtbaren Ziele, `debugShow({ solo, calm })`
+blendet Ebenen für den Pixelvergleich aus.
+
 Version 0.2, Schneeballschlacht:
 
 - **Komplette Runde** (10 Aufgaben × 3 = 30, Spielart 1) per Mausklick auf das richtige Kind: jede der 5 Zwischenrunden folgt genau nach 5, 10, 15, 20 und 25 Lösungen; Banner, Sturm, Wechsel der Tageszeit, neues Detail, Etappenanzeige und Marken im Balken; ein absichtlicher Fehlwurf; Auswertung am Ende.
-- **Sichtbarkeit und Verdeckung** in fünf Bildschirmgrößen (16:9, 4:3, 21:9, 1366 × 768), je Batterie bei Schwenk ganz links, Mitte, ganz rechts: alle Ziele vollständig im Bild, keine Überlappung der Trefferflächen, Pixelvergleich „Kinder allein“ gegen „ganze Szene“ innerhalb der Trefferflächen.
+- **Sichtbarkeit und Verdeckung** in sechs Bildschirmgrößen (1280 × 720, 1920 × 1080, 1600 × 900, 1024 × 768, 2560 × 1080, 1366 × 768), je Batterie bei Schwenk ganz links, Mitte, ganz rechts: alle Ziele vollständig im Bild, keine Überlappung der Trefferflächen, Pixelvergleich „Kinder allein“ gegen „ganze Szene“ innerhalb der Trefferflächen.
 - **Alle sechs Tageszeiten** als Bildschirmfotos gesichtet.
 
 Version 0.1: Menü, Truthahn-Skeet in allen Kulissen, Spielart 2 mit Tastatureingabe, Game
 Over nach fünf durchgelassenen Zielen.
 
 Nicht geprüft: Bildrate und Spielgefühl auf echter Grafikhardware, Tonausgabe (auch
-Windgeräusch), Profil-Export/-Import per Dateidialog. Die Tests liegen noch nicht im
-Repository (Issue 13).
+Windgeräusch), Profil-Export/-Import per Dateidialog. Noch offen (Issue 13): Tests für
+Truthahn-Skeet und Menü im Repository, Ausführung in GitHub Actions.
 
 ## 9 Geplant (noch nicht umgesetzt)
 
@@ -430,7 +450,8 @@ Jeder Punkt ist als GitHub-Issue angelegt.
 - **Touch-/Tablet-Bedienung** mit Bildschirm-Ziffernblock.
 - **Grafikausbau** Truthahn-Skeet (Modelle, Texturen) und Umstellung auf eine 2D-Mehrebenen-Szene mit Etappen nach 7.4; Schneeballschlacht: weitere Posen je Kind (z. B. verdutztes Gesicht bei falschem Treffer), Wurfhand.
 - **ADHS-Feinjustierung** (Reizreduktion, Pausenhinweise, ruhiger Modus).
-- **Automatisierte Tests und Veröffentlichung** (GitHub Pages).
+- **Automatisierte Tests und Veröffentlichung** (GitHub Pages); Tests der Schneeballschlacht liegen in `tests/`.
+- **Kleinere offene Punkte der Schneeballschlacht** (ohne eigenes Issue): Das Aufgabenfeld unten mittig kann Beine und den unteren Körperrand von Kindern der vorderen Reihe überdecken (Kopf und Schild bleiben frei); Ebenen optional vorab als WebP ausliefern (11.1); Treppengiebel; animierte Posen (Issue 11).
 
 ## 10 Fachliche Einordnung und Hinweise
 
@@ -442,3 +463,102 @@ Jeder Punkt ist als GitHub-Issue angelegt.
 - **Bildvorlagen**: Gemälde und Fotos dienten als Stilreferenz, es wurden keine fremden Bilddateien übernommen. Die Grafiken der Schneeballschlacht sind eigene Vektorzeichnungen des Auftraggebers (mit KI-Unterstützung entstanden, siehe `assets/schneeball-bruegel/spec.md`, Abschnitt 9, zur offenen Frage der Urheberschaft); Truthahn-Skeet wird zur Laufzeit erzeugt.
 - **2D-Technik**: Gestaffelte Ebenen mit Parallaxe und Figuren als Ausschneidebilder (Cut-out) sind das übliche Verfahren für 2D-Spiele dieser Art; Stand der Technik ist dabei, Vektorgrafiken einmalig zu rastern bzw. als Texturatlas auszuliefern und über WebGL zu zeichnen. Hier wird beim Laden im Browser gerastert (kein Build-Schritt). Für schwächere Geräte wäre der nächste Schritt, die Ebenen vorab als WebP auszuliefern; das spart Ladezeit, kostet aber die Anpassung an die Bildschirmauflösung.
 - **Zwischenrunden**: Kurze, nicht bewertete Unterbrechungen mit sichtbarem Etappenziel entsprechen dem Prinzip des „Chunking“ und der Zielnähe-Rückmeldung (goal-gradient, Hull 1932; Kivetz et al. 2006) und kommen Kindern mit ADHS entgegen (kurze Verstärkungsintervalle, Sonuga-Barke). Zu beobachten ist, ob der Schneesturm als Belohnung oder als Ablenkung wirkt; ein ruhiger Modus (Issue 12) sollte ihn abschwächen können. Derzeit geschieht das nur über die Systemeinstellung „Bewegung reduzieren“.
+
+## 11 Entscheidungen, Abwägungen und Erkenntnisse
+
+Protokoll der Entwicklungssitzungen vom 15./16.11.2026 (KI-gestützt). Es hält fest,
+**warum** etwas so gebaut ist, welche Alternativen verworfen wurden und welche Fehler
+aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
+überschreiben (Datum, Begründung).
+
+### 11.1 Architekturentscheidungen
+
+| Nr. | Entscheidung | Verworfene Alternative | Begründung |
+|---|---|---|---|
+| E1 | **2D-Mehrebenen-Szenen mit PixiJS** für neue Szenarien | three.js für alles | Die Szenarien brauchen keine räumliche Geometrie, sondern gestaffelte Ebenen mit Parallaxe. 2D ist einfacher zu gestalten (Grafiken als Ebenen eines Zeichenprogramms), Verdeckung ist über die Ebenenreihenfolge exakt steuerbar, Ziele sind als Ausschneidefiguren klar lesbar. Vorgabe des Auftraggebers. Truthahn-Skeet bleibt vorerst 3D. |
+| E2 | **Zwei Engines nebeneinander** (`engine.js`, `engine2d.js`) mit gleicher Schnittstelle zu `play.js`, je eigene Zeichenfläche (`#gl`, `#gl2d`) | gemeinsame Engine / sofortige Umstellung des Truthahns | Kein Umbau eines funktionierenden Szenarios nötig. `play.js` kennt nur `shoot()`, `toScreen()`, `onHit`, `onFrame`, `timeScale`, `paused`. Zwei WebGL-Kontexte gleichzeitig vermeiden: Jede Engine bekommt ihre eigene Leinwand, die andere wird versteckt. |
+| E3 | **Kein Build-Schritt**: PixiJS 8.23 als `vendor/pixi.min.mjs`, eingebunden per Import-Map | npm + Bundler (Vite) | Projekt bleibt statisch (GitHub Pages, Doppelklick-tauglich mit einfachem Server). Nachteil: 0,9 MB ungeteilt; akzeptabel. Die `sourceMappingURL`-Zeile wurde entfernt (keine 404-Meldung). |
+| E4 | **WebGL statt WebGPU** (`preference: 'webgl'`) | WebGPU | PixiJS empfiehlt WebGL weiterhin als stabilen Standard; WebGPU bringt für diese Szenen keinen Vorteil. |
+| E5 | **SVG beim Laden im Browser rastern** (`rasterSvg`), Auflösung nach Bildschirmmaßstab (Faktor 1–2) | SVG direkt als Textur; Vorab-Rastern zu WebP | SVG-Filter (`feTurbulence` für Maltextur, `feMorphology` für Papierrand) sind teuer und werden so nur einmal berechnet. Vorab-WebP spart Ladezeit (nicht gemessen), bindet aber an feste Auflösungen und braucht einen Exportschritt. Umstieg auf WebP ist möglich, wenn Ladezeit auf schwachen Geräten stört. |
+| E6 | **Original-Ebenen unverändert lassen, Spiel-Ebenen per Skript ableiten** (`tools/build-snow-wide.py` → `layers-wide/`) | Originale von Hand erweitern | Die Grafiken stammen vom Auftraggeber und können neu geliefert werden. Das Skript ist reproduzierbar: verbreitern, Ebene 02 teilen, gemalten Rauch, Vögel und Eisläufer entfernen (die werden im Spiel animiert, sonst doppelt). |
+| E7 | **Szenenraster 1280 × 720, unten verankert**, Himmel nach oben verlängert | Raster an Bildschirm anpassen / Ränder schwarz | Kinder und Deckungen liegen unten; auf hohen Bildschirmen (4:3) wird oben Himmel ergänzt. Verlängert wird mit der obersten Pixelzeile der Grafik, nicht mit einer Flächenfarbe (sichtbare Naht, siehe 11.3). |
+| E8 | **Plätze der Ziele automatisch bestimmen** (Alphakanal der Ebenen) | feste, handplatzierte Verstecke | Feste Verstecke waren die Ursache von Issue 14 (Ziele außerhalb des Bildes, hinter Bäumen). Die automatische Prüfung bleibt gültig, wenn Grafiken geändert werden, und gilt bei jedem Schwenk. Kosten: eine einmalige Berechnung beim Laden (nicht gemessen, im Test nicht spürbar). |
+| E9 | **Gleicher Parallaxfaktor für Zielreihe und ihre Deckung** | Ziele auf eigener Ebene | Sonst verrutschen Füße und Deckung beim Schwenk gegeneinander, und die Figur „schwebt“. |
+| E10 | **Kameraschwenk klein (±100) und gedämpft** | großer Schwenk / Scrollen | Schwenk soll Tiefe zeigen, nicht Suchen erzwingen. Große Schwenks hätten Ziele aus dem Bild gedrängt (ADHS-Leitlinie: alles Relevante sichtbar). |
+| E11 | **Ergebnis auf Papierschild vor der Brust** | Zahl auf der Mütze (v0.1) | Die neuen Figuren haben verschiedene Kopfbedeckungen ohne Platz für Zahlen. Schild ist bei allen Posen gleich lesbar; Schriftgröße je Reihe so gewählt, dass sie am Bildschirm ähnlich groß erscheint. |
+| E12 | **Wurfziel an der Ebene des anvisierten Ziels verankern** | Ziel in Sichtkoordinaten fest | Die Kamera schwenkt nach einer Mausbewegung noch nach; ein in Sichtkoordinaten fester Zielpunkt verfehlte dann das Kind (im Test gefunden, 11.3). |
+| E13 | **Etappen zählen gelöste Aufgaben (erster Versuch)**, 5 je Etappe | Etappe nach 5 gestellten Aufgaben | Fortschritt soll nur durch Lösen wachsen, wie der Balken. Fehler verlängern die Etappe, statt sie „abzusitzen“. |
+| E14 | **Zwischenrunde als Szenario-Methode** (`intermission`), Ablauf in `play.js` | Effekt fest in `play.js` | Jedes Szenario gestaltet seinen Übergang selbst; Zählung, Banner und Balken bleiben einheitlich. Szenarien ohne Methode laufen unverändert. |
+| E15 | **Tageszeit über Farbmultiplikator je Ebenengruppe** (`tint`), Fensterlicht als eigene Lichtebene | getrennte Grafiksätze je Tageszeit / Shader-Filter | Ein Grafiksatz reicht; billig auf jeder Hardware. Fenster werden über ihre Farbe (`#e8bd6a`) aus der Grafik gewonnen und nicht abgedunkelt. Kinder werden nur zu 45 % mitgetönt, damit sie nachts lesbar bleiben. |
+| E16 | **Tagesverlauf auf die Etappenzahl skaliert** | feste Folge je Etappe | Die letzte Etappe zeigt immer die Nacht, unabhängig von der Rundenlänge (2–10 Etappen). Bei weniger als 4 Etappen beginnt der Tag am Mittag. |
+
+### 11.2 Abwägungen zur Gestaltung
+
+- **Reizdichte vs. Lebendigkeit.** Rauch, Schnee, Vögel und Eisläufer bewegen sich langsam und liegen außerhalb der Trefferflächen oder dahinter. Der Sturm ist der einzige starke Effekt und fällt in die Pause ohne Aufgabe. Bei `prefers-reduced-motion` weniger Flocken, kürzerer Sturm ohne Böenflocken. Ein ruhiger Modus im Menü fehlt noch (Issue 12).
+- **Lesbarkeit vs. Stimmung.** Die Nacht ist deutlich dunkel, Kinder und Schilder bleiben heller als die Kulisse. Schilder: dunkle Schrift auf Papier, kräftiger Rand.
+- **Verdeckung vs. Tiefe.** Kinder tauchen hinter Deckungen auf (Spannung, „Klappfiguren“), aber nur Füße und Standleiste sind verdeckt; Kopf, Schild und Körper nie.
+- **Platzangebot.** Reihe A (hinten) hat wegen Bäumen und Häusern wenig freie Plätze; die Auswahl gewichtet daher die Reihen B und C stärker (2,2 : 1).
+- **Etappengröße 5.** Bei Standardrunde (10 Aufgaben × 3) ergibt das 6 Etappen zu je etwa 1–2 Minuten. Kleinere Etappen würden zu oft unterbrechen, größere den Zwischenzielen ihre Wirkung nehmen.
+
+### 11.3 Stolpersteine und Fehler aus der Entwicklung
+
+| Problem | Ursache | Lösung / Regel |
+|---|---|---|
+| Kinder der vorderen Reihen fanden keinen Platz | Abfrage der Verdeckungskarte außerhalb der Karte (unterste Zeile) lieferte „durchsichtig“ | Koordinaten am Kartenrand begrenzen (`_alpha`) |
+| Hinteres Kind teilweise vom vorderen überdeckt (nur bei 1280 × 720 gefunden) | Mindestabstand zwischen Reihen zu knapp (78 Figureinheiten) | 104 Einheiten + Parallaxversatz; Pixeltest mit vielen Batterien fahren |
+| Würfe verfehlten nach schneller Mausbewegung | Kamera schwenkt nach, Zielpunkt stand in Sichtkoordinaten | E12 |
+| Sichtbare Naht am Himmel auf 4:3 | Verlängerung mit einer Flächenfarbe aus der Bildmitte, Grafik hat dort einen Verlauf | oberste Pixelzeile strecken |
+| Niedrige Bildrate | Vollbildflächen mit Deckkraft 0 (Sturmschleier, Lichtebene) wurden trotzdem gezeichnet | unsichtbare Objekte auf `visible = false` setzen; Füllrate ist der Engpass, nicht die Objektzahl |
+| Fenster leuchten nicht mehr | Lichtebene sucht die Fensterfarbe `#e8bd6a` | Farbe in neuen Grafiken beibehalten oder Erkennung in `_buildGlow` anpassen |
+| Tests hingen, Bildschirmfotos liefen in Zeitüberschreitung | Software-Renderer schafft 1–7 Bilder/s; Playwright wartet auf stabile Bilder | Engine im Test anhalten und von Hand takten (`__step`), Fotos mit `animations: 'disabled'` |
+| Lokaler Webserver in der Arbeitsumgebung nicht erlaubt | Sandbox-Regel | Dateien im Test per Request-Interception ausliefern (`tests/helpers.js`) |
+
+### 11.4 Hinweise zu Grafiken neuer Szenarien
+
+- Lieferformat wie `assets/schneeball-bruegel/spec.md`: deckungsgleiche Ebenen (SVG, gemeinsames Raster), je Zielreihe eine Deckungsebene, Figuren mit festem Drehpunkt (Mitte Unterkante) und definierten Trefferflächen.
+- An den Rändern mindestens 240 Einheiten Reserve für Schwenk und breite Bildschirme, oder ein Verbreiterungsskript wie `tools/build-snow-wide.py`.
+- Dinge, die das Spiel animiert (Rauch, Vögel, Wasser, Fahrzeuge), nicht in die Ebenen malen, sondern als einzelne Sprites liefern.
+- Lichtquellen für Nachtstimmungen in einer eindeutigen Farbe zeichnen (wie die Fenster) oder als eigene Ebene liefern.
+- Rechtliches: Bei KI-gestützt entstandenen Grafiken Herkunft und Bearbeitung dokumentieren (siehe Asset-Spezifikation, Abschnitt 9).
+
+## 12 Leitfaden für KI-gestützte Weiterarbeit
+
+### 12.1 Arbeitsablauf
+
+1. **Lesen:** diese Spezifikation (mindestens 3, 5, 7.4, 11), dann `js/play.js`, `js/engine2d.js` und `js/scenarios/snow.js` als Vorbild. Offene Issues auf GitHub prüfen.
+2. **Klären:** Fehlende Vorgaben (Grafiken, Stil, Inhalte) beim Auftraggeber erfragen, bevor gebaut wird. Grafiken des Auftraggebers haben Vorrang vor erzeugten.
+3. **Bauen:** neues Szenario als eigene Datei `js/scenarios/<name>.js` mit der Schnittstelle 7.4.2, Registrierung in `SCENARIOS` (`js/main.js`) mit `engine: '2d'`. `play.js`, `session.js` und `engine2d.js` nur ändern, wenn es alle Szenarien betrifft.
+4. **Prüfen:** Regeln 7.4.3 automatisiert nachweisen (Vorlage `tests/visibility.test.js`), komplette Runde durchspielen (Vorlage `tests/round.test.js`), Bildschirmfotos sichten. Nicht prüfbare Punkte (echte Hardware, Ton) ausdrücklich benennen.
+5. **Dokumentieren:** Abschnitt 7.x für das Szenario ergänzen, neue Entscheidungen und Stolpersteine in 11 nachtragen, `CHANGELOG.md`, `README.md`, Bildschirmfotos in `docs/screenshots/`. Issues kommentieren und abhaken.
+
+### 12.2 Konventionen
+
+- Sprache: Deutsch in Oberfläche, Kommentaren, Dokumentation und Commit-Nachrichten. Fachbegriffe wie in Abschnitt 3.
+- Keine Abhängigkeiten über `vendor/` hinaus, kein Build-Schritt, keine externen Netzaufrufe zur Laufzeit.
+- Grafiken des Auftraggebers in `assets/<szenario>/` unverändert ablegen; Ableitungen per Skript in `tools/` erzeugen.
+- Koordinaten: Szenenraster (Ebenen) und Sichtkoordinaten (Geschosse, Effekte, Treffer) sauber trennen (7.4.1).
+- Rückmeldung im selben Frame wie der Treffer (5.3); keine Strafen, kein Zeitdruck außerhalb von Spielart 2.
+- Neue Einstellungen gehören ins Menü (Abschnitt 4) und in das Profilformat (`data/profile.schema.json`).
+
+### 12.3 Definition of Done für ein neues Szenario
+
+- [ ] Spielbar in allen vier Spielarten (5.2), inkl. Zeitlupe und Eingabe in Spielart 2 (`resolve(target, 'lock')`).
+- [ ] Ziele immer im Bild und nie verdeckt (7.4.3), automatisiert geprüft in mindestens 16:9, 4:3 und 21:9.
+- [ ] Richtig- und Falsch-Rückmeldung szenariospezifisch, Ton über `audio.play()`.
+- [ ] Etappen mit `intermission()` nach den Gestaltungsregeln in 5.6.
+- [ ] Erzeugte Bewegung im Hintergrund, nicht vor den Trefferflächen.
+- [ ] `prefers-reduced-motion` berücksichtigt.
+- [ ] Keine Fehler in der Konsole; Ressourcen in `dispose()` freigegeben.
+- [ ] Spezifikation (7.x, 11), Changelog, README, Bildschirmfotos aktualisiert.
+
+### 12.4 Vorlage für einen Auftrag an eine KI
+
+```
+Lies spec.md (Abschnitte 3, 5, 7.4, 11, 12) und js/scenarios/snow.js.
+Baue das Szenario „<Name>“ aus Abschnitt 9.1 als 2D-Mehrebenen-Szene nach 7.4.
+Grafiken: assets/<ordner>/ (Asset-Spezifikation: assets/<ordner>/spec.md).
+Zwischenrunde: <verdeckendes Ereignis>, Verlauf über die Etappen: <Stimmung>,
+neue Details je Etappe: <Liste>.
+Halte die Regeln 7.4.3 ein und weise sie mit einem Test nach tests/visibility.test.js nach.
+Ergänze spec.md (7.x und 11), CHANGELOG.md und README.md. Commit auf einem eigenen Branch.
+```

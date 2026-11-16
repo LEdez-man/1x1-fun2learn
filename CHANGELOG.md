@@ -2,6 +2,13 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach SemVer.
 
+## [Unreleased]
+
+### Hinzugefügt
+- `spec.md` Abschnitt 11 (Entscheidungen, Abwägungen, Stolpersteine) und 12 (Leitfaden für KI-gestützte Weiterarbeit mit Definition of Done und Auftragsvorlage)
+- `AGENTS.md` und `CLAUDE.md` als Einstieg für KI-Werkzeuge
+- Browsertests der Schneeballschlacht in `tests/` (komplette Runde, Sichtbarkeit/Verdeckung, Bildergalerie)
+
 ## [0.2.0] – 2026-11-15
 
 Schneeballschlacht als 2D-Mehrebenen-Szene mit eigenen Grafiken, Etappen und Zwischenrunden.
