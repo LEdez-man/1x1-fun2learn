@@ -20,7 +20,7 @@
         "scenario": { "type": "string" },
         "need": { "enum": [2, 3, 5], "description": "So oft muss jede Aufgabe richtig sein" },
         "tempo": { "type": "number" },
-        "lead": { "type": "boolean", "description": "Vorhalten nötig" },
+        "lead": { "type": "boolean", "description": "Ballistik an/aus (Flugzeit des Geschosses, Vorhalten)" },
         "typeTimeout": { "type": "number", "description": "Sekunden für die Tastatureingabe" },
         "sound": { "type": "boolean" },
         "round": { "type": "integer", "description": "Rundenzähler; bestimmt die Kulissenvariante" }

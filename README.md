@@ -1,9 +1,11 @@
 # 1×1 Fun2Learn
 
-Browser-Lernspiel für das kleine und große 1×1 mit 2D-Mehrebenen-Szenen (PixiJS) und einem 3D-Szenario (three.js).
+Browser-Lernspiel für das kleine und große 1×1 mit 2D-Mehrebenen-Szenen (PixiJS).
 Ziele tragen Ergebnisse oder Aufgaben – wer das richtige trifft, kommt weiter.
 
-![Truthahn-Skeet, Herbstkulisse](docs/screenshots/truthahn-herbst.png)
+![Truthahn-Skeet, Rocky Mountains im Herbst](docs/screenshots/skeet-rocky-herbst.png)
+![Truthahn-Skeet, Schwarzwald im Winter](docs/screenshots/skeet-schwarzwald-winter.png)
+![Truthahn-Skeet, Uckermark in der Abenddämmerung](docs/screenshots/skeet-uckermark-daemmerung.png)
 ![Schneeballschlacht, Mittag](docs/screenshots/schnee-tag.png)
 ![Schneeballschlacht, Zwischenrunde mit Schneesturm](docs/screenshots/schnee-sturm.png)
 ![Schneeballschlacht, Nacht in der letzten Etappe](docs/screenshots/schnee-nacht.png)
@@ -22,11 +24,12 @@ GitHub Pages veröffentlichen.
 
 Bedienung: Maus zielt, Linksklick schießt, Zifferntasten für Ergebnisse, Esc pausiert.
 
-## Stand (v0.2.0)
+## Stand (v0.3.0)
 
 - Menü: Zahlenraum, Aufgabentopf (u. a. Königsaufgaben, einzelne Reihen, Lernraster, eigene Fehler, Trainer-Auswahl), 4 Spielarten, Einstellungen
-- Szenarien: **Truthahn-Skeet** (3D, 4 wechselnde Rocky-Mountain-Kulissen), **Schneeballschlacht** (2D, Winterdorf nach Bruegel mit eigenen Grafiken, Kameraschwenk, Rauch, Schnee, Vögeln)
-- Etappen in der Schneeballschlacht: nach je 5 gelösten Aufgaben ein Schneesturm, danach neue Tageszeit und neue Details; Etappenmarken im Fortschrittsbalken
+- Szenarien: **Truthahn-Skeet** (Jagdreise durch Rocky Mountains, Schwarzwald und Uckermark mit Truthahn, Ringeltaube und Fasan; selbst gezeichnete Ebenen mit Schattierung und Schraffur), **Schneeballschlacht** (Winterdorf nach Bruegel mit eigenen Grafiken, Kameraschwenk, Rauch, Schnee, Vögeln)
+- Etappen in beiden Szenarien: nach je 5 gelösten Aufgaben eine Zwischenrunde (Nebel bzw. Schneesturm), danach neues Revier, neue Jahres- oder Tageszeit; Etappenmarken im Fortschrittsbalken
+- Ballistik an- und abschaltbar: Flugzeit und Vorhalten auf fliegende Ziele, oder Treffer sofort am Fadenkreuz
 - Auswertung je Aufgabe mit empfohlener Übungsserie
 - Mehrere Spieler, Lernstand im Browser, Sichern/Laden als JSON-Datei
 
@@ -46,5 +49,6 @@ Geplante Szenarien und Erweiterungen stehen in [spec.md](spec.md), Abschnitt 9, 
 
 ## Lizenzen
 
-three.js und PixiJS liegen unter MIT-Lizenz in `vendor/` (siehe `vendor/THREE-LICENSE`, `vendor/PIXI-LICENSE`).
+PixiJS liegt unter MIT-Lizenz in `vendor/` (siehe `vendor/PIXI-LICENSE`).
+Die Grafiken in `assets/vogel-skeet/` zeichnet `tools/build-skeet-assets.py`.
 Die Grafiken in `assets/schneeball-bruegel/` sind eigene Zeichnungen (siehe dortige `spec.md`).

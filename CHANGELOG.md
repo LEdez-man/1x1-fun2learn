@@ -2,12 +2,26 @@
 
 Format nach [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionierung nach SemVer.
 
-## [Unreleased]
+## [0.3.0] – 2026-11-16
+
+Truthahn-Skeet als 2D-Jagdreise mit Etappen und Ballistik; Spezifikation für die Weiterarbeit.
 
 ### Hinzugefügt
-- `spec.md` Abschnitt 11 (Entscheidungen, Abwägungen, Stolpersteine) und 12 (Leitfaden für KI-gestützte Weiterarbeit mit Definition of Done und Auftragsvorlage)
+- Truthahn-Skeet neu als 2D-Mehrebenen-Szene: drei Reviere (Rocky Mountains, Schwarzwald, Uckermark) mit Truthahn, Ringeltaube und Jagdfasan
+- Per Skript gezeichnete Grafiken mit Schattierung und Schraffur (`tools/build-skeet-assets.py` → `assets/vogel-skeet/`), Schneefassungen für den Winter
+- Etappen als Jagdreise: Nebel als Zwischenrunde, danach neue Jahreszeit oder neues Revier (zwölf Stationen, auf die Etappen der Runde verteilt)
+- Ballistik als Schalter im Menü: Flugzeit, Geschossabfall und Vorhalten, oder Treffer sofort am Fadenkreuz; Fehlschüsse zeigen, wo die Garbe lag
+- Engine: `shot.ballistics(to)` je Schuss (Flugzeit, Abfall, Trefferradius)
+- `spec.md` Abschnitt 11 (Entscheidungen, Abwägungen, Stolpersteine), 12 (Leitfaden für KI-gestützte Weiterarbeit) und 7.4.5 (Ballistik)
 - `AGENTS.md` und `CLAUDE.md` als Einstieg für KI-Werkzeuge
-- Browsertests der Schneeballschlacht in `tests/` (komplette Runde, Sichtbarkeit/Verdeckung, Bildergalerie)
+- Browsertests in `tests/` (Schneeballschlacht: Runde, Sichtbarkeit, Galerie; Truthahn-Skeet: Runde, Ballistik, Sichtbarkeit)
+
+### Geändert
+- Einstellung „Vorhalten nötig (ja/nein)“ heißt jetzt „Ballistik (an/aus)“; das Profilfeld `lead` bleibt
+- Ergebnisse hängen als Papierschild unter dem Vogel
+
+### Entfernt
+- 3D-Fassung des Truthahn-Skeet, `js/engine.js` und three.js (Stand in der Git-Historie)
 
 ## [0.2.0] – 2026-11-15
 

@@ -3,7 +3,6 @@ import { RANGES, POOLS, buildPool, allFacts, parse, key, isHard, errorFacts, fac
 import { Session, recommend } from './session.js';
 import { store } from './store.js';
 import { audio } from './audio.js';
-import { Engine } from './engine.js';
 import { Engine2D } from './engine2d.js';
 import { Play } from './play.js';
 import { TurkeyScenario } from './scenarios/turkey.js';
@@ -20,8 +19,8 @@ const MODES = [
 
 // Szenarien mit `cls` sind spielbar; die übrigen sind spezifiziert (spec.md) und geplant.
 const SCENARIOS = [
-  { id: 'turkey', label: 'Truthahn-Skeet', hint: 'Bergwiese in den Rocky Mountains', ico: '🦃', cls: TurkeyScenario },
-  { id: 'snow', label: 'Schneeballschlacht', hint: 'Winterdorf am zugefrorenen See', ico: '☃️', cls: SnowScenario, engine: '2d' },
+  { id: 'turkey', label: 'Truthahn-Skeet', hint: 'Jagdreise: Rocky Mountains, Schwarzwald, Uckermark', ico: '🦃', cls: TurkeyScenario },
+  { id: 'snow', label: 'Schneeballschlacht', hint: 'Winterdorf am zugefrorenen See', ico: '☃️', cls: SnowScenario },
   { id: 'train', label: 'Tiefflieger', hint: 'in Planung', ico: '✈️' },
   { id: 'ufo', label: 'UFO-Abwehr', hint: 'in Planung', ico: '🛸' },
   { id: 'pond', label: 'Fischteich', hint: 'in Planung', ico: '🐟' },
@@ -29,7 +28,7 @@ const SCENARIOS = [
   { id: 'balloon', label: 'Ballon-Zwille', hint: 'in Planung', ico: '🎈' },
 ];
 
-const engines = {};       // '3d' (three.js) und '2d' (PixiJS), je eigene Zeichenfläche
+let engine2d = null;      // PixiJS-Engine, wird beim ersten Start angelegt
 let starting = false;
 let lastRun = null;       // { pool, range } der letzten Runde für "Nochmal"
 const S = () => store.profile.settings;
@@ -114,7 +113,7 @@ function renderMenu() {
   const seg = (id, items, cur, k) => optButtons($(id), items, cur, (v) => set(k, v), '');
   seg('optNeed', [2, 3, 5].map((v) => ({ id: v, label: `${v}×` })), s.need, 'need');
   seg('optTempo', [{ id: 0.75, label: 'gemütlich' }, { id: 1, label: 'normal' }, { id: 1.3, label: 'flott' }], s.tempo, 'tempo');
-  seg('optLead', [{ id: true, label: 'ja' }, { id: false, label: 'nein' }], s.lead, 'lead');
+  seg('optLead', [{ id: true, label: 'an' }, { id: false, label: 'aus' }], s.lead, 'lead');
   seg('optType', [3, 5, 8].map((v) => ({ id: v, label: `${v} s` })), s.typeTimeout, 'typeTimeout');
 }
 
@@ -122,11 +121,9 @@ const pretty = (k) => k.replace('x', ' × ');
 const escapeHtml = (t) => t.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
 // ---------------------------------------------------------------- Runde
-async function getEngine(kind) {
-  if (!engines[kind]) engines[kind] = kind === '2d' ? await new Engine2D($('gl2d')).init() : new Engine($('gl'));
-  $('gl').hidden = kind === '2d';
-  $('gl2d').hidden = kind !== '2d';
-  return engines[kind];
+async function getEngine() {
+  if (!engine2d) engine2d = await new Engine2D($('gl2d')).init();
+  return engine2d;
 }
 
 async function startRun(pool, range) {
@@ -142,7 +139,7 @@ async function startRun(pool, range) {
   let engine;
   $('loading').hidden = false;
   try {
-    engine = await getEngine(scen.engine || '3d');
+    engine = await getEngine();
     engine.resize();
     await engine.load(scen.cls, { tempo: s.tempo, lead: s.lead, variant: s.round, stages: session.stageCount });
   } catch (err) {

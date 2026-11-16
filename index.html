@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>1×1 Fun2Learn</title>
   <link rel="stylesheet" href="css/style.css">
-  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "pixi.js": "./vendor/pixi.min.mjs" } }</script>
+  <script type="importmap">{ "imports": { "pixi.js": "./vendor/pixi.min.mjs" } }</script>
 </head>
 <body>
 
@@ -57,7 +57,7 @@
     <h2><b>5</b> Einstellungen</h2>
     <div class="row"><span>Jede Aufgabe richtig</span><div id="optNeed" class="seg"></div></div>
     <div class="row"><span>Tempo</span><div id="optTempo" class="seg"></div></div>
-    <div class="row"><span>Vorhalten nötig</span><div id="optLead" class="seg"></div></div>
+    <div class="row"><span title="Flugzeit des Geschosses: auf fliegende Ziele muss vorgehalten werden">Ballistik (Flugzeit, Vorhalten)</span><div id="optLead" class="seg"></div></div>
     <div class="row"><span>Zeit zum Tippen</span><div id="optType" class="seg"></div></div>
   </section>
 
@@ -106,8 +106,7 @@
 
 <!-- ===================== Spiel ===================== -->
 <div id="game" class="screen" hidden>
-  <canvas id="gl"></canvas>
-  <canvas id="gl2d" hidden></canvas>
+  <canvas id="gl2d"></canvas>
   <div id="hud">
     <div class="hudtop">
       <div id="progress"><div id="progressFill"></div><div id="progressTicks"></div></div>

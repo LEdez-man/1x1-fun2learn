@@ -1,6 +1,5 @@
 // 2D-Grundgerüst auf PixiJS: gestaffelte Bildebenen mit Parallaxe, leichter
-// Kameraschwenk mit der Maus, Wurfgeschosse, Partikel. Gleiche Schnittstelle
-// zu play.js wie die 3D-Engine (engine.js).
+// Kameraschwenk mit der Maus, Geschosse (wahlweise mit Ballistik), Partikel.
 //
 // Koordinaten: Alle Ebenen teilen das Raster der Szene (design.w × design.h,
 // Ursprung oben links). Eine Ebene mit Parallaxfaktor f wird um −cam.x · f
@@ -256,12 +255,18 @@ export class Engine2D {
     const to = this.aimView();
     const from = this.toView(v.w * cfg.origin.x, v.h * cfg.origin.y);
     const end = sc.depthAt ? sc.depthAt(to.y) : 1;
-    const aimed = this._targetAt(to, cfg.radius * end);
-    const f = aimed ? aimed.f ?? 1 : 1;
+    // Ballistik (optional, je Schuss): Flugzeit, Geschossabfall, Trefferradius, Ebene des Zielpunkts
+    const bal = cfg.ballistics ? cfg.ballistics(to) : null;
+    const radius = bal?.radius ?? cfg.radius * end;
+    const aimed = this._targetAt(to, radius);
+    const f = bal?.f ?? (aimed ? aimed.f ?? 1 : 1);
     const obj = cfg.make();
     obj.position.set(from.x, from.y);
     this.fx.root.addChild(obj);
-    this.projectiles.push({ obj, from, to, f, anchor: { x: to.x + this.cam.x * f, y: to.y }, t: 0, dur: cfg.flight, end });
+    this.projectiles.push({
+      obj, from, to, f, radius, end, t: 0, dur: Math.max(0.001, bal?.flight ?? cfg.flight),
+      anchor: { x: to.x + this.cam.x * f, y: to.y + (bal?.drop || 0) },
+    });
     if (sc.onShoot) sc.onShoot(from, to);
     return true;
   }
@@ -275,11 +280,11 @@ export class Engine2D {
       p.to = this.layerToView(p.anchor, p.f);
       p.obj.position.set(lerp(p.from.x, p.to.x, k), lerp(p.from.y, p.to.y, k) - Math.sin(k * Math.PI) * sc.shot.arc);
       p.obj.scale.set(lerp(sc.shot.startScale, sc.shot.endScale * p.end, k));
-      p.obj.rotation += dt * 9;
+      p.obj.rotation += dt * (sc.shot.spin ?? 9);
       if (k < 1) continue;
       p.obj.destroy();
       this.projectiles.splice(i, 1);
-      const hit = this._targetAt(p.to, sc.shot.radius * p.end);       // vorderstes Ziel gewinnt
+      const hit = this._targetAt(p.to, p.radius);       // vorderstes Ziel gewinnt
       if (hit && this.onHit) this.onHit(hit, p.to);
       else if (sc.onMiss) sc.onMiss(p.to);
     }

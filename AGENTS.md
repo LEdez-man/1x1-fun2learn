@@ -10,10 +10,11 @@ Beschreibung: [`spec.md`](spec.md). Vor jeder Änderung lesen:
 Kurzregeln:
 
 - Deutsch in Oberfläche, Kommentaren, Doku und Commits.
-- Neue Szenarien als 2D-Mehrebenen-Szene mit PixiJS (`js/engine2d.js`, Vorbild `js/scenarios/snow.js`).
+- Szenarien sind 2D-Mehrebenen-Szenen mit PixiJS (`js/engine2d.js`); Vorbild für stehende Ziele `js/scenarios/snow.js`, für bewegte Ziele `js/scenarios/turkey.js`.
 - Bibliotheken nur aus `vendor/` (Import-Map in `index.html`), keine neuen Abhängigkeiten, kein Bundler.
 - Grafiken des Auftraggebers in `assets/` nicht verändern; Ableitungen per Skript in `tools/`.
 - Ziele müssen bei jedem Kameraschwenk vollständig sichtbar und unverdeckt sein (spec 7.4.3).
 - Starten: `python3 -m http.server 8000`, dann `http://localhost:8000` (mit `?debug` für Testhilfen).
-- Prüfen: `node tests/round.test.js`, `node tests/visibility.test.js` (Playwright, siehe spec 8.2).
+- Prüfen: `node tests/round.test.js`, `node tests/visibility.test.js`, `node tests/skeet.test.js` (Playwright, siehe spec 8.2).
+- Die Einstellung „Ballistik“ (an/aus) muss jedes Szenario berücksichtigen (spec 7.4.5).
 - Nach Änderungen `spec.md`, `CHANGELOG.md` und ggf. `README.md` nachführen; offene Punkte stehen in den GitHub-Issues.

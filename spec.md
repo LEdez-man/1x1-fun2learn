@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Version** | 0.2.0 (Schneeballschlacht als 2D-Mehrebenen-Szene, Etappen) |
+| **Version** | 0.3.0 (Truthahn-Skeet als 2D-Jagdreise mit Etappen und Ballistik; three.js entfällt) |
 | **Datum** | 2026-11-16 |
-| **Status** | Kern + 2 Szenarien umgesetzt, 5 Szenarien und Erweiterungen spezifiziert (siehe Abschnitt 9 und GitHub-Issues). Etappen und Zwischenrunden bisher nur in der Schneeballschlacht (Abschnitt 5.6), Übertragung auf weitere Szenarien nach Abschnitt 7.4. |
-| **Technik** | Statische Web-App, ES-Module, kein Build-Schritt. 2D-Szenarien: PixiJS 8.23 (WebGL); 3D-Szenario Truthahn-Skeet: three.js r170. Beide Bibliotheken liegen lokal in `vendor/`. |
+| **Status** | Kern + 2 Szenarien umgesetzt, beide als 2D-Mehrebenen-Szene mit Etappen und Zwischenrunden (5.6). 5 Szenarien und Erweiterungen spezifiziert (Abschnitt 9 und GitHub-Issues), Bau nach Abschnitt 7.4. |
+| **Technik** | Statische Web-App, ES-Module, kein Build-Schritt. Alle Szenarien: PixiJS 8.23 (WebGL), lokal in `vendor/`. |
 
 Dieses Dokument ist die verbindliche Beschreibung des Spiels für Menschen und für
 Werkzeuge (z. B. KI-Assistenten), die daran weiterarbeiten. Abschnitte 1–8 beschreiben
@@ -23,7 +23,7 @@ Einordnung.
 
 Browser-Lernspiel zur **Automatisierung des kleinen und großen 1×1** für Grundschulkinder,
 ausdrücklich auch für Kinder mit ADHS. Das Rechnen ist in kurze Geschicklichkeitsszenen
-(2D-Mehrebenen-Szenen, ein 3D-Szenario) eingebettet: Ziele tragen Ergebnisse oder Aufgaben, das richtige Ziel wird getroffen.
+(2D-Mehrebenen-Szenen) eingebettet: Ziele tragen Ergebnisse oder Aufgaben, das richtige Ziel wird getroffen.
 
 Leitlinien:
 
@@ -61,8 +61,17 @@ Vorgaben zu Version 0.2 (Schneeballschlacht):
 | Figuren immer im Bild, nie verdeckt | Zielzone und Verdeckungsprüfung, siehe 7.4.3. Behebt Issue 14. |
 | Zwischenrunde nach je 5 Aufgaben, Etappen im Fortschrittsbalken | Abschnitt 5.6. |
 
+Vorgaben zu Version 0.3 (Truthahn-Skeet):
+
+| Vorgabe | Umsetzung |
+|---|---|
+| Etappen auf das Truthahn-Szenario übertragen | Jagdreise: Jede Etappe wechselt Jahreszeit oder Revier (7.1). |
+| Ballistik als an- und abschaltbare Option | Menüpunkt „Ballistik (Flugzeit, Vorhalten)“ an/aus, ersetzt „Vorhalten nötig“ (7.1, 7.4.5). |
+| Grafik weg vom „klumpigen“ 3D, hin zum Stil von Projektor-Jagdspielen; Schattierung und Schraffur für Raumtiefe | Umstieg auf 2D-Mehrebenen-Grafik (Entscheidung E17). Grafiken per Skript gezeichnet: flächige Formen mit Kontur, Schattenseiten abgedunkelt und schraffiert, Dunst in der Ferne. Das genannte Produkt „Hunter Raid Projector Game Set“ war nicht auffindbar; der Stil ist eine Annahme. |
+| Mögliche Reviere: Rocky Mountains durch die Jahreszeiten, Schwarzwald mit Auerhahn, Uckermark mit Goldfasan | Alle drei Reviere umgesetzt. Abweichend fliegen im Schwarzwald Ringeltauben und in der Uckermark Jagdfasane: Das Auerhuhn ist in Deutschland vom Aussterben bedroht und ganzjährig geschont, der Goldfasan ist ein Ziervogel (vom Auftraggeber bestätigter Vorschlag). |
+
 Einschränkung: Das im Auftrag erwähnte frühere Drohnenabwehrspiel lag in dieser
-Arbeitsumgebung nicht vor. Die Grafik wurde deshalb eigenständig mit three.js aufgebaut;
+Arbeitsumgebung nicht vor. Die Grafik wurde deshalb eigenständig aufgebaut;
 eine Angleichung an jenes Projekt ist möglich, sobald dessen Code zugänglich ist.
 
 ## 3 Begriffe
@@ -74,7 +83,9 @@ eine Angleichung an jenes Projekt ist möglich, sobald dessen Code zugänglich i
 | **Königsaufgaben** | Reihen mit 1, 2, 5 und 10. Schnell lernbar und Stützpunkte für Ableitungen (z. B. 6×7 = 5×7 + 7). |
 | **Batterie** | Eine Gruppe von Zielen zu einer Fragestellung. |
 | **Runde** | Bis zu 10 Aufgaben; endet, wenn jede Aufgabe `need`-mal im ersten Versuch richtig war. |
-| **Szenario** | Kulisse samt Zielobjekten (Truthähne, Kinder, …), als 2D-Mehrebenen-Szene oder 3D-Szene. |
+| **Szenario** | Kulisse samt Zielobjekten (Vögel, Kinder, …) als 2D-Mehrebenen-Szene. |
+| **Revier / Station** | Truthahn-Skeet: Landschaft (Rocky Mountains, Schwarzwald, Uckermark) bzw. Revier samt Jahreszeit; je Etappe eine Station (7.1). |
+| **Ballistik** | Einstellung: Geschosse haben Flugzeit und Abfall, auf bewegte Ziele muss vorgehalten werden (7.4.5). |
 | **Etappe** | Abschnitt einer Runde: 5 richtig gelöste Aufgaben (die letzte Etappe kann kürzer sein). |
 | **Zwischenrunde** | Kurzer Übergang nach einer Etappe ohne Aufgabe: Das Szenario verändert sich sichtbar (5.6). |
 | **Ebene** | Bildschicht einer 2D-Szene mit eigenem Parallaxfaktor (7.4). |
@@ -101,7 +112,7 @@ Fünf nummerierte Schritte, alle Auswahlen werden pro Spieler gespeichert:
 
 3. **Spielart**: Ergebnis treffen / Treffen & tippen / Geteilt-Aufgaben / Alles gemischt.
 4. **Szenario**: spielbare und geplante Szenarien (geplante sind ausgegraut).
-5. **Einstellungen**: Wiederholungen (2×/3×/5×), Tempo (gemütlich/normal/flott), Vorhalten nötig (ja/nein), Zeit zum Tippen (3/5/8 s).
+5. **Einstellungen**: Wiederholungen (2×/3×/5×), Tempo (gemütlich/normal/flott), Ballistik (an/aus; im Profil weiterhin als `lead` gespeichert), Zeit zum Tippen (3/5/8 s).
 
 Zusätzlich: Spielerauswahl, neuer Spieler, Lernstand, Profil sichern/laden (JSON), Ton an/aus.
 Liegt eine Empfehlung aus der letzten Runde vor, erscheint oben der Button
@@ -194,7 +205,7 @@ Anforderung.
 Ein Szenario nimmt teil, indem es `intermission(stage, stageCount)` anbietet (7.3/7.4). Es
 spielt seinen Übergang selbst ab und gibt `{ duration, label, detail }` zurück; `play.js`
 wartet `duration` Sekunden und stellt dann die nächste Batterie. Szenarien ohne diese
-Methode (derzeit Truthahn-Skeet) laufen unverändert ohne Etappen.
+Methode laufen ohne Etappen.
 
 Gestaltungsregeln für den Übergang (gelten für alle Szenarien):
 
@@ -215,16 +226,58 @@ mindestens eine Antwort gegeben wurde.
 ## 7 Szenarien (umgesetzt)
 
 Gemeinsame Bedienung: Fadenkreuz folgt der Maus, Linksklick schießt/wirft, Esc pausiert.
-Geschosse haben eine Flugzeit; bei „Vorhalten nötig: ja“ muss bei bewegten Zielen leicht
-vorgehalten werden, bei „nein“ ist das Geschoss praktisch sofort am Ziel.
+Mit der Einstellung „Ballistik: an“ haben Geschosse eine Flugzeit, auf bewegte Ziele muss
+vorgehalten werden; bei „aus“ sitzt der Schuss sofort am Fadenkreuz (7.4.5).
 
-### 7.1 Truthahn-Skeet (`js/scenarios/turkey.js`)
+### 7.1 Truthahn-Skeet (`js/scenarios/turkey.js`, 2D mit PixiJS)
 
-- **Kulisse**: Bergwiese in den Rocky Mountains. Hangwiese mit Gras, Gebüsch im Vordergrund, Startbüsche links/rechts/mittig, knorrige flache Büsche und einzelne Kiefern im Mittelgrund, Nadelwald am Hang, drei gestaffelte Bergketten mit Luftperspektive, Wolkenhimmel.
-- **Vier Kulissen im Wechsel pro Runde**: Herbst im Hochtal (goldenes Gras, Espen, Bachlauf), Sommer unter den Gipfeln (grün, Wildblumen), Wintertag im Schnee, Schneereste im Vorfrühling.
-- **Ziele**: Wildtruthähne mit Schwanzfächer und Flügelschlag, Ergebnis als Schild am Körper. Flugrichtung wechselt je Batterie: von links, von rechts, aus den mittleren Büschen auseinander.
-- **Richtig**: Federwolke, Leuchtring, Funken. **Falsch**: Truthahn sinkt schlaff ab.
-- **Waffe**: Bockflinte aus der Ich-Perspektive, folgt dem Fadenkreuz, Rückstoß, Mündungsblitz.
+**Grafiken.** Per Skript gezeichnete Vektorgrafiken in `assets/vogel-skeet/`
+(`tools/build-skeet-assets.py`, siehe dortige `README.md`): drei Reviere mit je vier
+Ebenen `fern`, `mitte`, `nah`, `vorn` (1760 × 720), für Rocky Mountains und Schwarzwald
+zusätzlich als Schneefassung; drei Vogelarten (Körper und Flügel getrennt); Bockflinte.
+Stil: flächige Formen mit dunkler Kontur, Schattenseite rechts unten abgedunkelt und
+schraffiert, Schlagschatten am Boden, Dunst an den fernen Ebenen, Papierrand an den Vögeln.
+
+**Ebenen** (hinten → vorn): `himmel` 0,03 (Verlauf, Sonne, Sterne, Wolken) · `schwarm` 0,08
+(ferner Vogelzug) · `fern` 0,12 · `mitte` 0,30 · `nah` 0,55 · `voegel` 1,0 · `vorn` 1,0
+(Gebüsch als Deckung) · `wetter` und `flinte` in Sichtkoordinaten. Alle drei Reviere sind
+geladen; sichtbar ist das Revier der laufenden Station.
+
+**Ziele.** Vögel steigen hinter dem Gebüsch im Vordergrund auf, fliegen im Bogen durchs
+Bild und landen wieder dahinter. Das Ergebnis hängt als Papierschild unter dem Vogel.
+Flugrichtung wechselt je Batterie: von links, von rechts, aus der Mitte nach außen. Drei
+Entfernungen (Maßstab 0,52 / 0,64 / 0,78), fünf Flughöhen. Trefferfläche: Rumpf (Ellipse),
+Kopf, Schild. Regeln 7.4.3 für bewegte Ziele:
+
+- Flugbahnen liegen ganz in der Zielzone (Bildmitte ± 540 abzüglich halber Figurbreite), also bei jedem Schwenk im Bild.
+- Die Vogel-Ebene liegt vor der gesamten Landschaft; verdecken kann nur das Gebüsch der Ebene `vorn`. Treffbar ist ein Vogel erst, wenn er mit Schild vollständig darüber ist (Unterkante über y = 596), und nicht mehr, sobald er beim Landen wieder eintaucht.
+- Alle Vögel einer Batterie fliegen gleich schnell und starten mit einem Abstand von einer vollen Figurbreite; sie können sich daher nicht überholen oder überdecken.
+- Die Flinte bleibt unterhalb der Flugbahnen (Mündung nie über y ≈ 618).
+
+- **Richtig**: Federwolke in den Farben der Art, Leuchtring, Funken. **Falsch**: Vogel trudelt mit verblasstem Schild ab. **Spielart 2**: getroffener Vogel bleibt flatternd stehen.
+- **Flinte**: Bockflinte unten rechts, folgt dem Fadenkreuz, Rückstoß, Mündungsfeuer; die Schrotgarbe startet an der Mündung.
+- **Ballistik** (7.4.5): aus = Treffer sofort am Fadenkreuz. An = Flugzeit 0,14–0,38 s und Geschossabfall 2–10 Einheiten, wachsend mit der Entfernung des nächstgelegenen Vogels; die Garbe wird mit der Entfernung breiter (Radius 13–18). Vögel fliegen mit 165 Einheiten/s (× Tempo), der nötige Vorhalt beträgt also etwa 25–60 Einheiten. Ein Fehlschuss zeigt als kleine Schrotwolke mit Ring, wo die Garbe lag.
+
+**Etappen (5.6): Jagdreise.** Zwischenrunde = Nebelbank zieht durchs Bild (3,2 s,
+Windgeräusch). Darunter wechselt die Station. Die Route hat zwölf Stationen und wird
+gleichmäßig auf die Etappen der Runde verteilt; die letzte Etappe zeigt immer die letzte
+Station.
+
+| Revier | Vogel | Stationen (Stimmung) |
+|---|---|---|
+| Rocky Mountains | Wildtruthahn | Goldener Herbst → Hochsommer → Tiefer Winter → Tauwetter |
+| Schwarzwald | Ringeltaube | Frühling → Hochsommer → Goldener Herbst → Tiefer Winter |
+| Uckermark | Jagdfasan | Hochsommer → Goldener Herbst → Abendrot → Abenddämmerung |
+
+Bei der Standardrunde (6 Etappen): Rocky Mountains im Herbst und im Winter, Schwarzwald im
+Frühling und im Winter, Uckermark im Herbst und in der Abenddämmerung. Umsetzung der
+Stimmung: Farbmultiplikator je Ebenengruppe, Schneefassung der Ebenen mit Deckkraft 0–1
+(Tauwetter 0,5), Sonnenstand, Sterne, Wetterteilchen (Laub, Schnee, Blütenstaub). Beim
+Revierwechsel werden die Ebenen unter dem Nebel überblendet; das Banner nennt Ziel und
+Vogelart („Weiter in den Schwarzwald · Frühling · es fliegen Ringeltauben“).
+
+**Erzeugte Bewegung.** Ziehende Wolken, ferner Vogelzug in Keilformation, Wetterteilchen,
+Flügelschlag.
 
 ### 7.2 Schneeballschlacht (`js/scenarios/snow.js`, 2D mit PixiJS)
 
@@ -269,7 +322,7 @@ Papierschild vor der Brust (Schriftgröße je Reihe so gewählt, dass sie am Bil
 zulässigen Plätzen gewählt (7.4.3).
 
 - **Richtig**: Figur klappt nach hinten weg, Schneepuff, Leuchtring. **Falsch**: Figur wackelt auf ihrer Leiste, Schild verblasst, sie taucht ab.
-- **Wurf**: Schneeball fliegt in 0,4 s im Bogen vom unteren Bildrand zum Fadenkreuz (bei „Vorhalten nötig: nein“ 0,1 s). Der Zielpunkt ist an der Ebene des anvisierten Kindes verankert: Schwenkt die Kamera während des Flugs noch nach, trifft der Ball trotzdem. Die Kinder stehen still, Vorhalten spielt hier praktisch keine Rolle.
+- **Wurf**: Schneeball fliegt in 0,4 s im Bogen vom unteren Bildrand zum Fadenkreuz (bei „Ballistik: aus“ 0,1 s). Der Zielpunkt ist an der Ebene des anvisierten Kindes verankert: Schwenkt die Kamera während des Flugs noch nach, trifft der Ball trotzdem. Die Kinder stehen still, Vorhalten spielt hier praktisch keine Rolle.
 
 **Erzeugte Bewegung.** Kaminrauch an acht Kaminen (Partikel), Schneefall, drei Vogelschwärme
 in Keilformation mit Flügelschlag, 16 Eisläufer auf kleinen Bögen, flackerndes Fensterlicht,
@@ -281,29 +334,11 @@ Unter dem Sturm wechseln:
 - **Tageszeit**: Morgen → Mittag → Nachmittag → Abendrot → Dämmerung → Nacht, gleichmäßig über die Etappen der Runde verteilt (bei weniger als 4 Etappen Beginn am Mittag; die letzte Etappe ist immer Nacht). Umsetzung: Farbmultiplikator je Ebenengruppe, Leuchten am Horizont, Sterne und Mond. Ab Abendrot leuchten die Fenster (aus der Fensterfarbe der Grafik gewonnene Lichtebene, die nicht abgedunkelt wird).
 - **Dorfleben** (ein Detail je Etappe, zyklisch): Fußspuren → Schlittenspur → Schneemann → Krähen auf dem Zaun → Neuschnee deckt die Spuren zu.
 
-### 7.3 Schnittstelle für 3D-Szenarien (three.js)
+### 7.3 Frühere 3D-Fassung
 
-Ein 3D-Szenario ist eine Klasse mit dieser Schnittstelle (Vorbild: `turkey.js`):
-
-```js
-class Scenario {
-  constructor(engine, { tempo, lead, variant })
-  sway      // { yaw, pitch } Kameraschwenk mit der Maus
-  shot      // { speed, cooldown, range, radius, aimDistance, offset, orient, makeMesh() }
-  targets   // [{ center: Vector3, radius, hittable, data, state, … }]
-  build()                 // Kulisse aufbauen, Kamera setzen
-  spawnWave(labels)       // labels: [{ text, correct?, … }] → je Eintrag ein Ziel
-  resolve(target, outcome)// 'correct' | 'wrong' | 'lock' (Spielart 2: Ziel anhalten)
-  dismiss()               // übrige Ziele verschwinden lassen
-  waveDone()              // true, wenn kein Ziel mehr aktiv ist
-  update(dt, rawDt)       // Animation; ruft onEscape(target) für durchgelassene Ziele
-  groundAt(x, z)          // optional: Bodenhöhe für Geschosseinschläge
-  onShoot(), onGroundHit()// optional: Effekte
-}
-```
-
-Registrierung in `SCENARIOS` in `js/main.js` (Eintrag mit `cls`). Spiellogik, Anzeige und
-Statistik bleiben unverändert. Optional: `intermission(stage, stageCount)` für Etappen (5.6).
+Bis Version 0.2 lief Truthahn-Skeet als 3D-Szene mit three.js (`js/engine.js`). Mit
+Version 0.3 sind die 3D-Engine und three.js entfallen (Entscheidung E17); der Stand ist
+in der Git-Historie erhalten (Commit `1b6c684` und früher).
 
 ### 7.4 Bauanleitung für 2D-Szenarien (PixiJS)
 
@@ -325,7 +360,7 @@ class Scenario2D {
   constructor(engine, { tempo, lead, variant, stages })   // stages = Etappenzahl der Runde
   design    // { w, h } Raster der Szene
   pan       // { x: größter Schwenk, safeHalf: halbe Breite der Zielzone, minPan, worldHalf: halbe Ebenenbreite }
-  shot      // { cooldown, flight, radius, arc, origin:{x,y}, startScale, endScale, make() }
+  shot      // { cooldown, flight, radius, arc, spin, origin:{x,y}, startScale, endScale, make(), ballistics(to)? }
   targets   // [{ center:{x,y} (Sicht), hittable, hitTest(p, r), z, f (Parallaxfaktor), data, state, … }]
   async build()            // Grafiken laden, Ebenen anlegen
   spawnWave(labels)        // labels: [{ text, correct?, … }] → je Eintrag ein Ziel
@@ -337,7 +372,7 @@ class Scenario2D {
 }
 ```
 
-Registrierung in `SCENARIOS` (`js/main.js`) mit `engine: '2d'`.
+Registrierung in `SCENARIOS` (`js/main.js`) mit `cls`.
 
 #### 7.4.3 Regeln für Ziele: immer im Bild, nie verdeckt
 
@@ -352,6 +387,10 @@ durchgesetzt (`_buildRows`, `_clash`, `_place`):
 
 Für handplatzierte Ziele in anderen Szenarien gelten dieselben Regeln als Checkliste.
 
+Für **bewegte Ziele** (Vorbild `turkey.js`) gelten die Regeln sinngemäß: Bahnen vollständig
+in der Zielzone; Ziele auf einer Ebene vor der gesamten Kulisse, treffbar nur außerhalb
+der Deckung; gleiche Geschwindigkeit und gestaffelter Start statt Platzsuche.
+
 #### 7.4.4 Checkliste für die Übertragung auf ein weiteres Szenario
 
 1. Grafiken als deckungsgleiche Ebenen anlegen, an den Rändern Reserve für den Schwenk (7.4.1); je Zielreihe eine Deckungsebene.
@@ -360,6 +399,16 @@ Für handplatzierte Ziele in anderen Szenarien gelten dieselben Regeln als Check
 4. Erzeugte Bewegung ergänzen (Partikel, Tiere, Wetter), aber nicht vor den Trefferflächen.
 5. `intermission()` nach 5.6 gestalten: verdeckendes Ereignis, Verlauf der Stimmung über die Etappen, ein neues Detail je Etappe, Bannertext.
 6. Prüfen wie in 8.2: Sichtbarkeit und Verdeckung bei vollem Schwenk in mehreren Seitenverhältnissen, komplette Runde.
+
+#### 7.4.5 Ballistik
+
+Die Einstellung „Ballistik“ (Profilfeld `lead`) gilt für alle Szenarien und wird dem
+Szenario als `opts.lead` übergeben.
+
+- Ohne eigene Regel nutzt die Engine `shot.flight` als feste Flugzeit (Schneeballschlacht: 0,4 s bzw. 0,1 s bei „aus“).
+- Mit `shot.ballistics(to)` bestimmt das Szenario je Schuss `{ flight, drop, radius, f }`: Flugzeit in Sekunden, Geschossabfall in Einheiten (verschiebt den Auftreffpunkt nach unten), Trefferradius und Parallaxfaktor der Ebene, in der der Auftreffpunkt verankert wird. Bei „aus“ liefert es `flight: 0` (Treffer im nächsten Bild).
+- Der Auftreffpunkt ist in der Ebene verankert, nicht am Ziel: Ein Kameraschwenk verschiebt ihn nicht, ein bewegtes Ziel fliegt aber weiter. Daraus ergibt sich das Vorhalten.
+- Gestaltungsregel: Der Vorhalt soll spürbar, aber klein sein (hier unter einer halben Figurbreite), und ein Fehlschuss muss zeigen, wo er lag. Für Kinder, die das überfordert, ist „aus“ die richtige Wahl; die Rechenleistung wird davon nicht berührt.
 
 ## 8 Architektur und Daten
 
@@ -370,16 +419,15 @@ js/main.js            Menü, Lernraster, Auswertung, Rundenstart
 js/tasks.js           Zahlenräume, Aufgabentöpfe, Distraktoren, Schwächewert
 js/session.js         Runde: Auswahl, Wiedervorlage, Endkriterium, Empfehlung
 js/play.js            Spielablauf: Batterien, Trefferauswertung, Rückmeldung
-js/engine.js          3D (three.js): Renderer, Zielen, Geschosse, Partikel, Beschriftungen
-js/engine2d.js        2D (PixiJS): Ebenen mit Parallaxe, Kameraschwenk, Würfe, Partikel, SVG-Rasterung
+js/engine2d.js        PixiJS: Ebenen mit Parallaxe, Kameraschwenk, Geschosse mit Ballistik, Partikel, SVG-Rasterung
 js/audio.js           Hinweistöne (WebAudio, synthetisch)
 js/store.js           Profile und Lernstand (localStorage, Export/Import)
 js/scenarios/*.js     Szenarien
-assets/               Grafiken der 2D-Szenarien (siehe 7.2)
-tools/                Hilfsskripte (Ebenen verbreitern)
+assets/               Grafiken der Szenarien (siehe 7.1, 7.2)
+tools/                Hilfsskripte (Ebenen verbreitern, Skeet-Grafiken zeichnen)
 tests/                Browsertests mit Playwright (siehe 8.2)
 AGENTS.md, CLAUDE.md  Einstieg für KI-Werkzeuge (verweist auf diese Spezifikation)
-vendor/               three.js r170, PixiJS 8.23 (beide MIT-Lizenz)
+vendor/               PixiJS 8.23 (MIT-Lizenz)
 data/                 Datenformat und Beispielprofil
 docs/screenshots/     Bildschirmfotos
 ```
@@ -406,6 +454,7 @@ Echtzeitschleife im Software-Renderer nur wenige Bilder pro Sekunde erreicht.
 |---|---|---|
 | `node tests/round.test.js [Bildordner]` | komplette Runde mit Etappen, Zwischenrunden, Balken, Auswertung | ca. 2–4 min |
 | `node tests/visibility.test.js [Bildordner]` | Regeln 7.4.3 in sechs Bildschirmgrößen | ca. 5–8 min |
+| `node tests/skeet.test.js [Bildordner] [runde\|ballistik\|sicht]` | Truthahn-Skeet: komplette Runde mit Reise-Etappen, Ballistik an/aus, Sichtbarkeit der fliegenden Vögel | ca. 6–10 min |
 | `node tests/gallery.js <Bildordner>` | Bildschirmfotos aller Tageszeiten und des Sturms (Sichtprüfung) | ca. 2 min |
 
 Voraussetzung: Node.js und Playwright mit Chromium (`npm i -D playwright` und
@@ -414,18 +463,25 @@ Szenario-Hilfen für Tests: Aufruf mit `?debug` setzt `window.__scenario`;
 `debugKids()` liefert die Bildschirmrechtecke der sichtbaren Ziele, `debugShow({ solo, calm })`
 blendet Ebenen für den Pixelvergleich aus.
 
+Version 0.3, Truthahn-Skeet (`tests/skeet.test.js`):
+
+- **Komplette Runde** (10 Aufgaben × 2 = 20, Ballistik aus) per Mausklick auf den richtigen Vogel: jeder Schuss trifft; Zwischenrunden nach 5, 10 und 15 Lösungen mit Banner, Nebel und neuer Station; letzte Etappe zeigt die letzte Station; Auswertung am Ende.
+- **Ballistik an**: Schüsse mit berechnetem Vorhalt treffen alle; direkt auf ferne Vögel gezielte Schüsse gehen überwiegend hinter dem Vogel durch.
+- **Sichtbarkeit und Verdeckung** in 16:9, 4:3 und 21:9: alle Viertelsekunde während des gesamten Flugs bei Schwenk ganz links und ganz rechts – Figuren vollständig im Bild, Trefferflächen überlappungsfrei, Pixelvergleich „Vögel allein“ gegen „ganze Szene“ mit und ohne die vorderen Ebenen.
+
 Version 0.2, Schneeballschlacht:
 
 - **Komplette Runde** (10 Aufgaben × 3 = 30, Spielart 1) per Mausklick auf das richtige Kind: jede der 5 Zwischenrunden folgt genau nach 5, 10, 15, 20 und 25 Lösungen; Banner, Sturm, Wechsel der Tageszeit, neues Detail, Etappenanzeige und Marken im Balken; ein absichtlicher Fehlwurf; Auswertung am Ende.
 - **Sichtbarkeit und Verdeckung** in sechs Bildschirmgrößen (1280 × 720, 1920 × 1080, 1600 × 900, 1024 × 768, 2560 × 1080, 1366 × 768), je Batterie bei Schwenk ganz links, Mitte, ganz rechts: alle Ziele vollständig im Bild, keine Überlappung der Trefferflächen, Pixelvergleich „Kinder allein“ gegen „ganze Szene“ innerhalb der Trefferflächen.
 - **Alle sechs Tageszeiten** als Bildschirmfotos gesichtet.
 
-Version 0.1: Menü, Truthahn-Skeet in allen Kulissen, Spielart 2 mit Tastatureingabe, Game
-Over nach fünf durchgelassenen Zielen.
+Version 0.1 (damalige 3D-Fassung): Menü, Spielart 2 mit Tastatureingabe, Game Over nach
+fünf durchgelassenen Zielen. Spielart 2 ist mit den 2D-Szenarien nicht erneut automatisiert
+geprüft worden.
 
 Nicht geprüft: Bildrate und Spielgefühl auf echter Grafikhardware, Tonausgabe (auch
 Windgeräusch), Profil-Export/-Import per Dateidialog. Noch offen (Issue 13): Tests für
-Truthahn-Skeet und Menü im Repository, Ausführung in GitHub Actions.
+Menü und Spielart 2, Ausführung in GitHub Actions.
 
 ## 9 Geplant (noch nicht umgesetzt)
 
@@ -448,7 +504,7 @@ Jeder Punkt ist als GitHub-Issue angelegt.
 - **Belohnungstoken für die Wochenaufgabe** (Wochenziel, einlösbare Token).
 - **Verteiltes Wiederholen über Tage** (Leitner-Fächer mit Fälligkeitsdatum) und Lernverlauf über die Zeit.
 - **Touch-/Tablet-Bedienung** mit Bildschirm-Ziffernblock.
-- **Grafikausbau** Truthahn-Skeet (Modelle, Texturen) und Umstellung auf eine 2D-Mehrebenen-Szene mit Etappen nach 7.4; Schneeballschlacht: weitere Posen je Kind (z. B. verdutztes Gesicht bei falschem Treffer), Wurfhand.
+- **Grafikausbau** Truthahn-Skeet: Grafiken des Auftraggebers statt der per Skript gezeichneten (gleiche Dateinamen und Maße, siehe `assets/vogel-skeet/README.md`), weitere Reviere, Umgebungsgeräusche, Hände an der Flinte; Schneeballschlacht: weitere Posen je Kind (z. B. verdutztes Gesicht bei falschem Treffer), Wurfhand.
 - **ADHS-Feinjustierung** (Reizreduktion, Pausenhinweise, ruhiger Modus).
 - **Automatisierte Tests und Veröffentlichung** (GitHub Pages); Tests der Schneeballschlacht liegen in `tests/`.
 - **Kleinere offene Punkte der Schneeballschlacht** (ohne eigenes Issue): Das Aufgabenfeld unten mittig kann Beine und den unteren Körperrand von Kindern der vorderen Reihe überdecken (Kopf und Schild bleiben frei); Ebenen optional vorab als WebP ausliefern (11.1); Treppengiebel; animierte Posen (Issue 11).
@@ -459,14 +515,15 @@ Jeder Punkt ist als GitHub-Issue angelegt.
 - **Aufgabenschwierigkeit**: Die Liste „Schwierige Aufgaben“ folgt dem Problemgrößeneffekt der kognitiven Arithmetik (Ashcraft 1992; Campbell & Graham 1985). Die Distraktoren bilden die dort beschriebenen Reihenfehler (operand errors) nach.
 - **Wiederholung**: Die Wiedervorlage innerhalb der Runde ist eine Kurzform der Lernkartei (Leitner 1972). Über Tage verteiltes Wiederholen ist wirksamer und als Erweiterung vorgesehen.
 - **ADHS**: Unmittelbare, häufige Rückmeldung und kurze Einheiten entsprechen den gängigen Empfehlungen (Barkley; Sonuga-Barke zur Verzögerungsaversion). Zu beachten: Zeitdruck (Spielart 2, 3 s) kann bei einem Teil der Kinder Fehler und Frust erhöhen; deshalb ist die Zeit einstellbar. Sinnvoll ist, die Wirkung am Kind zu beobachten und nicht von vornherein die schärfste Einstellung zu wählen.
+- **Jagdliche Einordnung**: Bejagt werden im Spiel nur Arten, die auch real jagdbar sind (Wildtruthahn in Nordamerika, Ringeltaube und Jagdfasan in Deutschland). Auerhuhn (in Deutschland vom Aussterben bedroht, ganzjährig geschont) und Goldfasan (Ziervogel) wurden deshalb nicht als Ziele übernommen. „Skeet“ bezeichnet eigentlich das Schießen auf Wurfscheiben; der Name ist aus Version 0.1 übernommen.
 - **Inhalte**: Jagd- und Kriegsszenarien (Flinte, Tieffliegerangriff) sind für ein Kinder-Lernspiel eine bewusste Entscheidung des Auftraggebers. Für eine Weitergabe an Dritte (Schule, Therapie) sollte die Altersangemessenheit je Szenario geprüft und die Szenarioauswahl ggf. einschränkbar gemacht werden.
-- **Bildvorlagen**: Gemälde und Fotos dienten als Stilreferenz, es wurden keine fremden Bilddateien übernommen. Die Grafiken der Schneeballschlacht sind eigene Vektorzeichnungen des Auftraggebers (mit KI-Unterstützung entstanden, siehe `assets/schneeball-bruegel/spec.md`, Abschnitt 9, zur offenen Frage der Urheberschaft); Truthahn-Skeet wird zur Laufzeit erzeugt.
+- **Bildvorlagen**: Gemälde und Fotos dienten als Stilreferenz, es wurden keine fremden Bilddateien übernommen. Die Grafiken der Schneeballschlacht sind eigene Vektorzeichnungen des Auftraggebers (mit KI-Unterstützung entstanden, siehe `assets/schneeball-bruegel/spec.md`, Abschnitt 9, zur offenen Frage der Urheberschaft); die Grafiken des Truthahn-Skeet sind per Skript gezeichnet (KI-gestützt, ohne Bildvorlagen).
 - **2D-Technik**: Gestaffelte Ebenen mit Parallaxe und Figuren als Ausschneidebilder (Cut-out) sind das übliche Verfahren für 2D-Spiele dieser Art; Stand der Technik ist dabei, Vektorgrafiken einmalig zu rastern bzw. als Texturatlas auszuliefern und über WebGL zu zeichnen. Hier wird beim Laden im Browser gerastert (kein Build-Schritt). Für schwächere Geräte wäre der nächste Schritt, die Ebenen vorab als WebP auszuliefern; das spart Ladezeit, kostet aber die Anpassung an die Bildschirmauflösung.
 - **Zwischenrunden**: Kurze, nicht bewertete Unterbrechungen mit sichtbarem Etappenziel entsprechen dem Prinzip des „Chunking“ und der Zielnähe-Rückmeldung (goal-gradient, Hull 1932; Kivetz et al. 2006) und kommen Kindern mit ADHS entgegen (kurze Verstärkungsintervalle, Sonuga-Barke). Zu beobachten ist, ob der Schneesturm als Belohnung oder als Ablenkung wirkt; ein ruhiger Modus (Issue 12) sollte ihn abschwächen können. Derzeit geschieht das nur über die Systemeinstellung „Bewegung reduzieren“.
 
 ## 11 Entscheidungen, Abwägungen und Erkenntnisse
 
-Protokoll der Entwicklungssitzungen vom 15./16.11.2026 (KI-gestützt). Es hält fest,
+Protokoll der Entwicklungssitzungen seit dem 15.11.2026 (KI-gestützt). Es hält fest,
 **warum** etwas so gebaut ist, welche Alternativen verworfen wurden und welche Fehler
 aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 überschreiben (Datum, Begründung).
@@ -475,8 +532,8 @@ aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 
 | Nr. | Entscheidung | Verworfene Alternative | Begründung |
 |---|---|---|---|
-| E1 | **2D-Mehrebenen-Szenen mit PixiJS** für neue Szenarien | three.js für alles | Die Szenarien brauchen keine räumliche Geometrie, sondern gestaffelte Ebenen mit Parallaxe. 2D ist einfacher zu gestalten (Grafiken als Ebenen eines Zeichenprogramms), Verdeckung ist über die Ebenenreihenfolge exakt steuerbar, Ziele sind als Ausschneidefiguren klar lesbar. Vorgabe des Auftraggebers. Truthahn-Skeet bleibt vorerst 3D. |
-| E2 | **Zwei Engines nebeneinander** (`engine.js`, `engine2d.js`) mit gleicher Schnittstelle zu `play.js`, je eigene Zeichenfläche (`#gl`, `#gl2d`) | gemeinsame Engine / sofortige Umstellung des Truthahns | Kein Umbau eines funktionierenden Szenarios nötig. `play.js` kennt nur `shoot()`, `toScreen()`, `onHit`, `onFrame`, `timeScale`, `paused`. Zwei WebGL-Kontexte gleichzeitig vermeiden: Jede Engine bekommt ihre eigene Leinwand, die andere wird versteckt. |
+| E1 | **2D-Mehrebenen-Szenen mit PixiJS** für alle Szenarien | three.js für alles | Die Szenarien brauchen keine räumliche Geometrie, sondern gestaffelte Ebenen mit Parallaxe. 2D ist einfacher zu gestalten (Grafiken als Ebenen eines Zeichenprogramms), Verdeckung ist über die Ebenenreihenfolge exakt steuerbar, Ziele sind als Ausschneidefiguren klar lesbar. Vorgabe des Auftraggebers. Seit 0.3 auch Truthahn-Skeet (E17). |
+| E2 | *(überholt durch E17)* **Zwei Engines nebeneinander** (`engine.js`, `engine2d.js`) mit gleicher Schnittstelle zu `play.js`, je eigene Zeichenfläche (`#gl`, `#gl2d`) | gemeinsame Engine / sofortige Umstellung des Truthahns | Kein Umbau eines funktionierenden Szenarios nötig. `play.js` kennt nur `shoot()`, `toScreen()`, `onHit`, `onFrame`, `timeScale`, `paused`. Zwei WebGL-Kontexte gleichzeitig vermeiden: Jede Engine bekommt ihre eigene Leinwand, die andere wird versteckt. |
 | E3 | **Kein Build-Schritt**: PixiJS 8.23 als `vendor/pixi.min.mjs`, eingebunden per Import-Map | npm + Bundler (Vite) | Projekt bleibt statisch (GitHub Pages, Doppelklick-tauglich mit einfachem Server). Nachteil: 0,9 MB ungeteilt; akzeptabel. Die `sourceMappingURL`-Zeile wurde entfernt (keine 404-Meldung). |
 | E4 | **WebGL statt WebGPU** (`preference: 'webgl'`) | WebGPU | PixiJS empfiehlt WebGL weiterhin als stabilen Standard; WebGPU bringt für diese Szenen keinen Vorteil. |
 | E5 | **SVG beim Laden im Browser rastern** (`rasterSvg`), Auflösung nach Bildschirmmaßstab (Faktor 1–2) | SVG direkt als Textur; Vorab-Rastern zu WebP | SVG-Filter (`feTurbulence` für Maltextur, `feMorphology` für Papierrand) sind teuer und werden so nur einmal berechnet. Vorab-WebP spart Ladezeit (nicht gemessen), bindet aber an feste Auflösungen und braucht einen Exportschritt. Umstieg auf WebP ist möglich, wenn Ladezeit auf schwachen Geräten stört. |
@@ -491,6 +548,12 @@ aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 | E14 | **Zwischenrunde als Szenario-Methode** (`intermission`), Ablauf in `play.js` | Effekt fest in `play.js` | Jedes Szenario gestaltet seinen Übergang selbst; Zählung, Banner und Balken bleiben einheitlich. Szenarien ohne Methode laufen unverändert. |
 | E15 | **Tageszeit über Farbmultiplikator je Ebenengruppe** (`tint`), Fensterlicht als eigene Lichtebene | getrennte Grafiksätze je Tageszeit / Shader-Filter | Ein Grafiksatz reicht; billig auf jeder Hardware. Fenster werden über ihre Farbe (`#e8bd6a`) aus der Grafik gewonnen und nicht abgedunkelt. Kinder werden nur zu 45 % mitgetönt, damit sie nachts lesbar bleiben. |
 | E16 | **Tagesverlauf auf die Etappenzahl skaliert** | feste Folge je Etappe | Die letzte Etappe zeigt immer die Nacht, unabhängig von der Rundenlänge (2–10 Etappen). Bei weniger als 4 Etappen beginnt der Tag am Mittag. |
+| E17 | **Truthahn-Skeet auf 2D umgestellt, three.js und `engine.js` entfernt** (16.11.2026) | 3D verfeinern (texturierte, animierte Modelle) | Zielstil sind flächige Figuren vor gemalter Kulisse; das ist 2D. Für 3D fehlen Modelle, und der Arbeitsablauf des Auftraggebers liefert Ebenen-Grafiken. Etappen, Stimmungen und die Regeln 7.4.3 sind in 2D bereits gelöst. Im Software-Renderer lief die 3D-Fassung mit 1 Bild/s, die 2D-Fassung mit 5–7. Verlust: echte Raumtiefe des Flugs; ersetzt durch drei Entfernungsstufen und die Flinte als Vordergrundfigur. Eine Engine weniger zu pflegen, 0,7 MB weniger Bibliothek. |
+| E18 | **Grafiken per Skript zeichnen** (`tools/build-skeet-assets.py`) | Grafiken zur Laufzeit erzeugen; von Hand gezeichnete SVG | Reproduzierbar und als Ganzes änderbar (Palette, Schraffur, Dichte); Ergebnis sind gewöhnliche SVG-Dateien, die der Auftraggeber später durch eigene ersetzen kann. Schneefassungen entstehen aus derselben Geometrie (gleicher Zufalls-Startwert), damit sie deckungsgleich überblendet werden können. |
+| E19 | **Etappen als Reise durch Reviere und Jahreszeiten**, alle Reviere vorab geladen | je Etappe nur Tageszeit; Revier erst bei Bedarf laden | Ein neues Revier ist das stärkste Signal „ich bin weiter“. Vorab laden vermeidet Ruckeln in der Zwischenrunde; die Ebenen sind beschnitten und mit höchstens Faktor 1,5 gerastert, damit der Speicherbedarf im Rahmen bleibt. Jahreszeiten über Farbmultiplikator und Schneefassung statt eigener Grafiksätze. |
+| E20 | **Bewegte Ziele: gleiche Geschwindigkeit, gestaffelter Start, eigene Ebene vor der Kulisse** | Platz- und Verdeckungssuche wie bei den Kindern | Bei fliegenden Zielen wäre eine Verdeckungsprüfung entlang der Bahn aufwendig; so ist Überdeckung konstruktiv ausgeschlossen. Preis: Perspektivisch müssten ferne Vögel langsamer wirken – darauf wird verzichtet. |
+| E21 | **Ballistik als Szenario-Funktion je Schuss** (`shot.ballistics`), ein Schalter im Menü | feste Flugzeit; mehrere Schieberegler | Entfernung, Abfall und Streuung hängen vom Szenario ab; das Kind bekommt genau einen Schalter. „Aus“ trennt Rechnen von Geschicklichkeit (wichtig bei motorischen Schwierigkeiten oder Frust). |
+| E22 | **Jagdbare Arten statt Auerhahn und Goldfasan** | Arten wie im Auftrag genannt | Siehe Abschnitt 10, Jagdliche Einordnung. |
 
 ### 11.2 Abwägungen zur Gestaltung
 
@@ -511,6 +574,9 @@ aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 | Niedrige Bildrate | Vollbildflächen mit Deckkraft 0 (Sturmschleier, Lichtebene) wurden trotzdem gezeichnet | unsichtbare Objekte auf `visible = false` setzen; Füllrate ist der Engpass, nicht die Objektzahl |
 | Fenster leuchten nicht mehr | Lichtebene sucht die Fensterfarbe `#e8bd6a` | Farbe in neuen Grafiken beibehalten oder Erkennung in `_buildGlow` anpassen |
 | Tests hingen, Bildschirmfotos liefen in Zeitüberschreitung | Software-Renderer schafft 1–7 Bilder/s; Playwright wartet auf stabile Bilder | Engine im Test anhalten und von Hand takten (`__step`), Fotos mit `animations: 'disabled'` |
+| Reihenfolge der Vögel (fern hinten) wirkte nicht | Sortieren des Kinder-Arrays einer PixiJS-Ebene von Hand wird nicht übernommen | `sortableChildren = true` und `zIndex` setzen |
+| Sonne überstrahlte den halben Himmel | additiver Lichtschein zu groß (Faktor 13) | Lichtscheine klein halten und am Bildschirmfoto prüfen |
+| Pixelvergleich meldete 1–2 % „Verdeckung“, obwohl nichts davor lag | halbtransparente Kanten (Rumpf/Schild) mischen sich mit dem Hintergrund | Verdeckung direkt messen: Abweichung mit und ohne die vorderen Ebenen vergleichen (`tests/skeet.test.js`), nicht die Schwelle anheben |
 | Lokaler Webserver in der Arbeitsumgebung nicht erlaubt | Sandbox-Regel | Dateien im Test per Request-Interception ausliefern (`tests/helpers.js`) |
 
 ### 11.4 Hinweise zu Grafiken neuer Szenarien
@@ -527,7 +593,7 @@ aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 
 1. **Lesen:** diese Spezifikation (mindestens 3, 5, 7.4, 11), dann `js/play.js`, `js/engine2d.js` und `js/scenarios/snow.js` als Vorbild. Offene Issues auf GitHub prüfen.
 2. **Klären:** Fehlende Vorgaben (Grafiken, Stil, Inhalte) beim Auftraggeber erfragen, bevor gebaut wird. Grafiken des Auftraggebers haben Vorrang vor erzeugten.
-3. **Bauen:** neues Szenario als eigene Datei `js/scenarios/<name>.js` mit der Schnittstelle 7.4.2, Registrierung in `SCENARIOS` (`js/main.js`) mit `engine: '2d'`. `play.js`, `session.js` und `engine2d.js` nur ändern, wenn es alle Szenarien betrifft.
+3. **Bauen:** neues Szenario als eigene Datei `js/scenarios/<name>.js` mit der Schnittstelle 7.4.2, Registrierung in `SCENARIOS` (`js/main.js`). Vorbild für stehende Ziele `snow.js`, für bewegte Ziele `turkey.js`. `play.js`, `session.js` und `engine2d.js` nur ändern, wenn es alle Szenarien betrifft.
 4. **Prüfen:** Regeln 7.4.3 automatisiert nachweisen (Vorlage `tests/visibility.test.js`), komplette Runde durchspielen (Vorlage `tests/round.test.js`), Bildschirmfotos sichten. Nicht prüfbare Punkte (echte Hardware, Ton) ausdrücklich benennen.
 5. **Dokumentieren:** Abschnitt 7.x für das Szenario ergänzen, neue Entscheidungen und Stolpersteine in 11 nachtragen, `CHANGELOG.md`, `README.md`, Bildschirmfotos in `docs/screenshots/`. Issues kommentieren und abhaken.
 
@@ -546,6 +612,7 @@ aufgetreten sind. Bei Änderungen an diesen Punkten bitte hier nachtragen statt
 - [ ] Ziele immer im Bild und nie verdeckt (7.4.3), automatisiert geprüft in mindestens 16:9, 4:3 und 21:9.
 - [ ] Richtig- und Falsch-Rückmeldung szenariospezifisch, Ton über `audio.play()`.
 - [ ] Etappen mit `intermission()` nach den Gestaltungsregeln in 5.6.
+- [ ] Einstellung „Ballistik“ berücksichtigt (7.4.5): bei „aus“ sofortiger Treffer.
 - [ ] Erzeugte Bewegung im Hintergrund, nicht vor den Trefferflächen.
 - [ ] `prefers-reduced-motion` berücksichtigt.
 - [ ] Keine Fehler in der Konsole; Ressourcen in `dispose()` freigegeben.
