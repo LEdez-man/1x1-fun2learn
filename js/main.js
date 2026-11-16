@@ -4,6 +4,7 @@ import { Session, recommend } from './session.js';
 import { store } from './store.js';
 import { audio } from './audio.js';
 import { Engine } from './engine.js';
+import { Engine2D } from './engine2d.js';
 import { Play } from './play.js';
 import { TurkeyScenario } from './scenarios/turkey.js';
 import { SnowScenario } from './scenarios/snow.js';
@@ -20,7 +21,7 @@ const MODES = [
 // Szenarien mit `cls` sind spielbar; die übrigen sind spezifiziert (spec.md) und geplant.
 const SCENARIOS = [
   { id: 'turkey', label: 'Truthahn-Skeet', hint: 'Bergwiese in den Rocky Mountains', ico: '🦃', cls: TurkeyScenario },
-  { id: 'snow', label: 'Schneeballschlacht', hint: 'Winterdorf am zugefrorenen See', ico: '☃️', cls: SnowScenario },
+  { id: 'snow', label: 'Schneeballschlacht', hint: 'Winterdorf am zugefrorenen See', ico: '☃️', cls: SnowScenario, engine: '2d' },
   { id: 'train', label: 'Tiefflieger', hint: 'in Planung', ico: '✈️' },
   { id: 'ufo', label: 'UFO-Abwehr', hint: 'in Planung', ico: '🛸' },
   { id: 'pond', label: 'Fischteich', hint: 'in Planung', ico: '🐟' },
@@ -28,7 +29,8 @@ const SCENARIOS = [
   { id: 'balloon', label: 'Ballon-Zwille', hint: 'in Planung', ico: '🎈' },
 ];
 
-let engine = null;
+const engines = {};       // '3d' (three.js) und '2d' (PixiJS), je eigene Zeichenfläche
+let starting = false;
 let lastRun = null;       // { pool, range } der letzten Runde für "Nochmal"
 const S = () => store.profile.settings;
 
@@ -120,19 +122,39 @@ const pretty = (k) => k.replace('x', ' × ');
 const escapeHtml = (t) => t.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 
 // ---------------------------------------------------------------- Runde
-function startRun(pool, range) {
+async function getEngine(kind) {
+  if (!engines[kind]) engines[kind] = kind === '2d' ? await new Engine2D($('gl2d')).init() : new Engine($('gl'));
+  $('gl').hidden = kind === '2d';
+  $('gl2d').hidden = kind !== '2d';
+  return engines[kind];
+}
+
+async function startRun(pool, range) {
   const s = S();
-  if (!pool.length) return;
+  if (!pool.length || starting) return;
+  starting = true;
   const scen = SCENARIOS.find((x) => x.id === s.scenario && x.cls) || SCENARIOS[0];
   lastRun = { pool, range };
   audio.unlock();
   show('game');
-  if (!engine) engine = new Engine($('gl'));
-  engine.resize();
   s.round = (s.round || 0) + 1;          // Kulisse wechselt mit jeder Runde
   const session = new Session({ pool, need: s.need, mode: s.mode, facts: store.profile.facts });
+  let engine;
+  $('loading').hidden = false;
+  try {
+    engine = await getEngine(scen.engine || '3d');
+    engine.resize();
+    await engine.load(scen.cls, { tempo: s.tempo, lead: s.lead, variant: s.round, stages: session.stageCount });
+  } catch (err) {
+    console.error(err);
+    alert('Das Szenario konnte nicht geladen werden: ' + err.message);
+    renderMenu(); show('menu');
+    return;
+  } finally {
+    $('loading').hidden = true; starting = false;
+  }
   const play = new Play({
-    engine, Scenario: scen.cls, session, settings: s,
+    engine, session, settings: s,
     onEnd: (result, aborted) => {
       const answered = result.correct + result.wrong > 0;
       if (answered) store.addSession(result, { range, scenario: scen.id, pool: s.pool, aborted });

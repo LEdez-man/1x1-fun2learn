@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-240 0 1760 720" width="1760" height="720">
+<defs>
+<linearGradient id="bank" gradientUnits="userSpaceOnUse" x1="0" y1="490" x2="0" y2="570">
+<stop offset="0" stop-color="#eeede1"/>
+<stop offset="1" stop-color="#d3d7cc"/>
+</linearGradient>
+
+</defs>
+
+<path d="M0 520 Q150 486 320 500 T640 496 T960 506 T1280 492 L1280 570 L0 570Z" fill="url(#bank)"/>
+<path d="M0 520 Q150 486 320 500 T640 496 T960 506 T1280 492" fill="none" stroke="#9fb0b0" stroke-width="3" opacity="0.7"/>
+<path d="M0 534 Q200 514 400 526 T800 524 T1280 516" fill="none" stroke="#c4cdcb" stroke-width="4" opacity="0.6"/>
+<path d="M-240 506 Q-120 496 0 520 L0 570 L-240 570Z M1280 492 Q1400 480 1520 500 L1520 570 L1280 570Z" fill="url(#bank)"/>
+<path d="M-240 506 Q-120 496 0 520 M1280 492 Q1400 480 1520 500" fill="none" stroke="#9fb0b0" stroke-width="3" opacity="0.7"/>
+<path d="M-240 524 Q-120 518 0 534 M1280 516 Q1400 506 1520 520" fill="none" stroke="#c4cdcb" stroke-width="4" opacity="0.6"/>
+</svg>
