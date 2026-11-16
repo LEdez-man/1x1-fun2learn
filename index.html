@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>1×1 Fun2Learn</title>
   <link rel="stylesheet" href="css/style.css">
-  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "pixi.js": "./vendor/pixi.min.mjs" } }</script>
 </head>
 <body>
 
@@ -107,14 +107,18 @@
 <!-- ===================== Spiel ===================== -->
 <div id="game" class="screen" hidden>
   <canvas id="gl"></canvas>
+  <canvas id="gl2d" hidden></canvas>
   <div id="hud">
     <div class="hudtop">
-      <div id="progress"><div id="progressFill"></div></div>
+      <div id="progress"><div id="progressFill"></div><div id="progressTicks"></div></div>
+      <div id="stageInfo" hidden></div>
       <div id="score">★ 0</div>
       <div id="lives" hidden>♥♥♥♥♥</div>
       <button id="btnPause" title="Pause (Esc)">Ⅱ</button>
     </div>
     <div id="popups"></div>
+    <div id="stageBanner"><b id="stageTitle"></b><span id="stageSub"></span></div>
+    <div id="loading" hidden>Szene wird geladen …</div>
     <div id="typebox" hidden>
       <div class="line"><span id="typeTask"></span> <span id="typeVal"></span><span class="caret">_</span></div>
       <div class="bar"><div id="typeBar"></div></div>

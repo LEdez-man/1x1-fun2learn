@@ -3,6 +3,7 @@
 import { parse, weakness, shuffle } from './tasks.js';
 
 export const MAX_ITEMS = 10;
+export const STAGE_SIZE = 5;       // richtig gelöste Aufgaben je Etappe
 
 export class Session {
   constructor({ pool, need, mode, facts }) {
@@ -27,10 +28,13 @@ export class Session {
 
   get open() { return this.items.filter((i) => i.hits < this.need); }
   get finished() { return this.gameOver || this.open.length === 0; }
-  get progress() {
-    const done = this.items.reduce((s, i) => s + Math.min(i.hits, this.need), 0);
-    return done / (this.items.length * this.need);
-  }
+  // Fortschritt zählt richtig gelöste Aufgaben (im ersten Versuch) bis zum Rundenziel.
+  get total() { return this.items.length * this.need; }
+  get done() { return this.items.reduce((s, i) => s + Math.min(i.hits, this.need), 0); }
+  get progress() { return this.done / this.total; }
+  // Etappen: je STAGE_SIZE richtig gelöste Aufgaben; die letzte Etappe kann kürzer sein.
+  get stageCount() { return Math.max(1, Math.ceil(this.total / STAGE_SIZE)); }
+  get stage() { return Math.min(this.stageCount - 1, Math.floor(this.done / STAGE_SIZE)); }
 
   // Aufgabentyp für die nächste Batterie.
   nextOp() {

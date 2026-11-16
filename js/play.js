@@ -1,6 +1,7 @@
 // Spielablauf einer Runde: Batterien stellen, Treffer auswerten, sofortige
 // Rückmeldung (Ton + Bild), Fortschritt und Abbruchkriterien.
 import { makeQuestion, distractors, shuffle } from './tasks.js';
+import { STAGE_SIZE } from './session.js';
 import { store } from './store.js';
 import { audio } from './audio.js';
 
@@ -9,10 +10,13 @@ const MISS_LIMIT = 5;            // Modus 2: so viele Ziele in Folge durchgelass
 const INTRO = 1.25, OUTRO = 1.15;
 
 export class Play {
-  constructor({ engine, Scenario, session, settings, onEnd }) {
+  // Das Szenario ist bereits geladen (engine.load in main.js).
+  constructor({ engine, session, settings, onEnd }) {
     this.e = engine; this.session = session; this.settings = settings; this.onEnd = onEnd;
-    engine.load(Scenario, { tempo: settings.tempo, lead: settings.lead, variant: settings.round || 0 });
     this.sc = engine.scenario;
+    // Etappen gibt es nur in Szenarien, die eine Zwischenrunde anbieten
+    this.staged = typeof this.sc.intermission === 'function' && session.stageCount > 1;
+    this.stageSeen = 0;
     this.sc.onEscape = (t) => this._escaped(t);
     engine.onHit = (t, p) => this._hit(t, p);
     engine.onFrame = (dt) => this._frame(dt);
@@ -35,6 +39,7 @@ export class Play {
     $('btnQuit').onclick = () => this._finish(true);
 
     $('lives').hidden = session.mode === 1 || session.mode === 3;
+    this._buildStages();
     this._hud();
   }
 
@@ -55,6 +60,7 @@ export class Play {
   // ---------------------------------------------------------- Batterie
   _begin() {
     if (this.session.finished) return this._finish(false);
+    if (this.staged && this.session.stage > this.stageSeen) return this._intermission();
     const op = this.session.nextOp();
     const prompt = $('prompt');
     if (op === 'type') {
@@ -72,6 +78,21 @@ export class Play {
     prompt.classList.remove('in'); void prompt.offsetWidth; prompt.classList.add('in');
     audio.play('task');
     this.state = 'intro'; this.timer = INTRO;
+  }
+
+  // Zwischenrunde nach jeder Etappe: Das Szenario spielt seinen Übergang
+  // (z. B. Schneesturm und neue Tageszeit), ein Banner meldet den Stand.
+  _intermission() {
+    const s = this.session;
+    this.stageSeen = s.stage;
+    const info = this.sc.intermission(s.stage, s.stageCount) || {};
+    audio.play('stage');
+    $('stageTitle').textContent = `Etappe ${s.stage} von ${s.stageCount} geschafft!`;
+    $('stageSub').textContent = [info.label, info.detail].filter(Boolean).join(' · ');
+    const b = $('stageBanner');
+    b.classList.remove('in'); void b.offsetWidth; b.classList.add('in');
+    this.state = 'inter'; this.timer = info.duration || 2.5;
+    this._hud();
   }
 
   _launch() {
@@ -161,6 +182,7 @@ export class Play {
     }
     if (this.state === 'intro') { if ((this.timer -= dt) <= 0) this._launch(); }
     else if (this.state === 'outro') { if ((this.timer -= dt) <= 0) this._begin(); }
+    else if (this.state === 'inter') { if ((this.timer -= dt) <= 0) { $('stageBanner').classList.remove('in'); this._begin(); } }
     else if (this.state === 'live' && this.sc.waveDone()) {
       const r = this.round;
       if (r.kind === 'pick') {            // kein richtiger Treffer: Lösung zeigen
@@ -182,8 +204,26 @@ export class Play {
     d.addEventListener('animationend', () => d.remove());
   }
 
+  // Etappenmarken im Fortschrittsbalken: eine Marke je STAGE_SIZE gelöster Aufgaben.
+  _buildStages() {
+    const ticks = $('progressTicks'), s = this.session;
+    ticks.innerHTML = '';
+    $('stageInfo').hidden = !this.staged;
+    if (!this.staged) return;
+    for (let i = 1; i < s.stageCount; i++) {
+      const t = document.createElement('i');
+      t.style.left = (i * STAGE_SIZE / s.total * 100) + '%';
+      ticks.appendChild(t);
+    }
+  }
+
   _hud() {
-    $('progressFill').style.width = Math.round(this.session.progress * 100) + '%';
+    const s = this.session;
+    $('progressFill').style.width = (s.progress * 100).toFixed(1) + '%';
+    if (this.staged) {
+      $('stageInfo').textContent = `Etappe ${Math.min(s.stage + 1, s.stageCount)}/${s.stageCount}`;
+      [...$('progressTicks').children].forEach((t, i) => t.classList.toggle('done', s.done >= (i + 1) * STAGE_SIZE));
+    }
     const c = this.session.items.reduce((s, i) => s + i.correct, 0);
     $('score').textContent = `★ ${c}`;
   }
@@ -199,6 +239,7 @@ export class Play {
     window.removeEventListener('mousedown', this._md);
     window.removeEventListener('keydown', this._kd);
     $('typebox').hidden = true; $('pause').hidden = true; $('popups').innerHTML = '';
+    $('stageBanner').classList.remove('in');
     $('prompt').classList.remove('in');
     const result = this.session.results();
     if (!aborted) audio.play(result.gameOver ? 'gameover' : 'fanfare');

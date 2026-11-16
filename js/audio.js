@@ -51,6 +51,20 @@ const sounds = {
   key(t) { tone(990, t, 0.04, { vol: 0.1 }); },
   miss(t) { tone(330, t, 0.18, { vol: 0.14, slide: -120 }); },
   gameover(t) { [392, 330, 262, 196].forEach((f, i) => tone(f, t + i * 0.18, 0.3, { type: 'triangle', vol: 0.25 })); },
+  stage(t) { [659, 784, 988].forEach((f, i) => tone(f, t + i * 0.1, 0.3, { type: 'triangle', vol: 0.22 })); },
+  // Windböe: gefiltertes Rauschen, das an- und abschwillt
+  wind(t) {
+    const dur = 3.2, len = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.9;
+    f.frequency.setValueAtTime(300, t); f.frequency.linearRampToValueAtTime(900, t + dur * 0.45); f.frequency.linearRampToValueAtTime(350, t + dur);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.22, t + dur * 0.4); g.gain.linearRampToValueAtTime(0.0001, t + dur);
+    src.connect(f).connect(g).connect(master);
+    src.start(t);
+  },
   fanfare(t) { [523, 523, 659, 784, 659, 784, 1047].forEach((f, i) => tone(f, t + i * 0.12, 0.25, { type: 'triangle', vol: 0.26 })); },
 };
 
