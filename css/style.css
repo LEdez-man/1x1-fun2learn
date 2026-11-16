@@ -86,11 +86,21 @@ select { font: inherit; padding: 7px 10px; border-radius: 10px; border: 0; backg
 
 /* ---------- Spiel ---------- */
 #game { position: fixed; inset: 0; max-width: none; padding: 0; margin: 0; overflow: hidden; cursor: none; }
-#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#gl, #gl2d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #hud { position: absolute; inset: 0; pointer-events: none; user-select: none; }
 .hudtop { position: absolute; top: 12px; left: 14px; right: 14px; display: flex; align-items: center; gap: 14px;
   font-weight: 900; font-size: 1.3rem; text-shadow: 0 2px 4px rgba(0, 0, 0, .7); }
-#progress { flex: 1; height: 16px; background: rgba(0, 0, 0, .4); border-radius: 99px; overflow: hidden; border: 2px solid rgba(255, 255, 255, .55); }
+#progress { flex: 1; height: 16px; background: rgba(0, 0, 0, .4); border-radius: 99px; overflow: hidden; border: 2px solid rgba(255, 255, 255, .55); position: relative; }
+#progressTicks i { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; background: rgba(255, 255, 255, .85); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); }
+#progressTicks i.done { background: #fff; }
+#stageInfo { font-size: 1rem; white-space: nowrap; background: rgba(0, 0, 0, .4); padding: 3px 12px; border-radius: 99px; }
+#stageBanner { position: absolute; left: 50%; top: 34%; transform: translate(-50%, -50%) scale(.8); opacity: 0; text-align: center; white-space: nowrap;
+  background: rgba(10, 18, 36, .82); border: 4px solid var(--accent); border-radius: 22px; padding: 14px 40px;
+  transition: transform .3s cubic-bezier(.2, 1.5, .4, 1), opacity .25s; }
+#stageBanner.in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+#stageBanner b { display: block; font-size: clamp(1.6rem, 4vw, 2.6rem); color: var(--accent); }
+#stageBanner span { display: block; font-size: clamp(1rem, 2.2vw, 1.4rem); margin-top: 4px; }
+#loading { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.4rem; font-weight: 800; background: rgba(10, 18, 36, .82); padding: 14px 28px; border-radius: 16px; }
 #progressFill { height: 100%; width: 0; background: linear-gradient(90deg, #ffc93c, #3ecf7a); transition: width .35s; }
 #lives { color: #ff6b6b; letter-spacing: 2px; }
 #btnPause { pointer-events: auto; cursor: pointer; width: 42px; height: 42px; border-radius: 12px; background: rgba(0, 0, 0, .45); font-weight: 900; }
@@ -135,5 +145,5 @@ select { font: inherit; padding: 7px 10px; border-radius: 10px; border: 0; backg
 
 @media (prefers-reduced-motion: reduce) {
   .pop.good { animation-duration: .8s; }
-  #prompt { transition: opacity .15s; }
+  #prompt, #stageBanner { transition: opacity .15s; }
 }
