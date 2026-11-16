@@ -1,5 +1,8 @@
 # Design und Grafiken
 
+Für die Herstellung (Freistellen, Aufbereiten, Texturen, Atlas) siehe
+`texturen-und-sprites.md`, für Modelle, Kamera und Sichtbarkeit im Raum `drei-d.md`.
+
 Inhalt: 1 Vom Thema zur Kernschleife · 2 Stil · 3 Lesbarkeit des Lerninhalts · 4 Ziele:
 immer im Bild, nie verdeckt · 5 Bewegung und Reizdichte · 6 Aufbau der Grafiken ·
 7 Herkunft und Rechte · 8 Inhalte und Altersangemessenheit
@@ -72,6 +75,10 @@ Aufbau der Szene automatisch durchgesetzt und im Test nachgewiesen.
 Folge für die Platzvergabe: Plätze werden je Batterie aus den zulässigen gewählt, nicht
 fest vergeben. Reihen mit wenig freien Plätzen werden seltener gewählt.
 
+**Im Raum (2,5D, 3D)** gelten dieselben Regeln; durchgesetzt werden sie über
+Sichtkegel- und Strahlprüfung je Batterie und über feste Bahnen (`drei-d.md`,
+Abschnitt 5).
+
 **Bewegte Ziele**
 - Bahnen liegen vollständig in der Zielzone.
 - Ziele liegen auf einer Ebene vor der gesamten Kulisse; treffbar sind sie nur
@@ -110,7 +117,13 @@ Lieferformat (Vorlage: `assets/asset-spec-vorlage.md`):
   Nachtstimmungen herausgelöst werden können.
 - Varianten (Schnee, Jahreszeit) aus derselben Geometrie, damit sie deckungsgleich
   überblendet werden können.
-- Vektorformat (SVG): skalierbar, klein, Farben im Code austauschbar.
+- Vektorformat (SVG): skalierbar, klein, Farben im Code austauschbar, von Haus aus
+  transparent.
+- Rasterbilder (Zeichnung, Foto, erzeugtes Bild) werden freigestellt und aufbereitet;
+  jedes Stück erhält ein Kontrollbild und eine Herkunftsangabe
+  (`texturen-und-sprites.md`).
+- Grafiken dimensionsneutral halten: freigestellte Figur mit Drehpunkt und
+  Trefferflächen taugt als 2D-Sprite und als Billboard im Raum.
 
 Umgang im Projekt:
 - Gelieferte Grafiken liegen unverändert in `assets/<szenario>/`. Was das Spiel lädt,

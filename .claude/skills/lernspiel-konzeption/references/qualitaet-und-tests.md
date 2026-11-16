@@ -12,6 +12,8 @@ of Done für ein Szenario · 4 Barrierefreiheit und Reizsteuerung · 5 Datenschu
 | Physik und Geometrie | Ballistik, Treffertests (Streifschuss, Start im Körper, großer Zeitschritt) | Einheitentests mit festem Zeitschritt |
 | Durchlauf | Menü → komplette Runde → Auswertung, je Szenario und Spielart; Zwischenrunden an den richtigen Stellen; ein absichtlicher Fehler | Browserautomatisierung (Playwright) |
 | Sichtbarkeit | Ziele vollständig im Bild, Trefferflächen überlappungsfrei, nichts verdeckt; bei Schwenk links, Mitte, rechts; in mehreren Seitenverhältnissen (16:9, 4:3, 21:9, kleine Laptops) | Abfrage der Rechtecke und Pixelvergleich |
+| Grafiken | freigestellte Sprites und Texturen: kein Saum auf hellem und dunklem Grund, nichts abgeschnitten, einheitliche Standlinie | Kontrollbilder aus `scripts/freistellen.py`, vom Auftraggeber abgenommen |
+| Bibliotheksstand | eingesetzte gegen neueste Versionen, Abkündigungen, Lizenzen | `scripts/bibliotheken-pruefen.py`, vor jedem neuen Szenario und halbjährlich |
 | Sichtprüfung | alle Stimmungen und der Übergang als Bildschirmfotos | Galerie-Skript, von einem Menschen gesichtet |
 | Echte Geräte | Bildrate, Spielgefühl, Ton, Dateidialoge, Lesbarkeit auf verschiedenen Bildschirmen | von Hand; in der Spezifikation als ungeprüft führen, bis erledigt |
 
@@ -38,7 +40,10 @@ beim nächsten Mal verloren.
 ## 3 Definition of Done für ein Szenario
 
 - [ ] Spielbar in allen Spielarten, einschließlich Zeitlupe und Eingabe bei freiem Abruf.
-- [ ] Ziele immer im Bild und nie verdeckt, automatisiert geprüft in mindestens 16:9, 4:3 und 21:9.
+- [ ] Ziele immer im Bild und nie verdeckt, automatisiert geprüft in mindestens 16:9, 4:3 und 21:9 (2D und 3D über die Bildschirmrechtecke der Ziele).
+- [ ] Lerninhalt am fernsten treffbaren Punkt in Mindestgröße lesbar.
+- [ ] Grafiken mit Kontrollbild abgenommen, Herkunft dokumentiert.
+- [ ] Bibliotheksstand geprüft und in der Spezifikation datiert.
 - [ ] Rückmeldung für richtig und falsch szenariospezifisch, im selben Bild wie der Treffer, mit Ton.
 - [ ] Etappen mit Zwischenrunde nach den Gestaltungsregeln.
 - [ ] Schalter, die Geschick abschalten, werden beachtet.
@@ -90,5 +95,10 @@ beim nächsten Mal verloren.
 | Runde zu lang | Endkriterium zu streng als Standard | Standard niedrig, Wert einstellbar |
 | Doppelte Bewegung | Rauch, Vögel, Läufer in die Ebene gemalt und zusätzlich animiert | Bewegtes aus den Ebenen entfernen |
 | Plan passt nicht mehr zur Technik | Engine wurde gewechselt, Planung und offene Pull Requests blieben auf altem Stand | nach jeder Technikentscheidung Pläne, Issues und Pull Requests durchsehen |
+| Heller oder dunkler Saum an Figuren, besonders verkleinert oder in 3D | durchsichtige Pixel tragen die alte Hintergrundfarbe | Kante einziehen, Farbe ausbluten; Kontrollbild auf beiden Gründen |
+| Schrift am Ziel in 3D unleserlich | Aufdruck schrumpft und verzerrt mit der Entfernung | Beschriftung als DOM-Element oder Billboard mit Mindestgröße |
+| Beispiel aus dem Netz läuft nicht | gilt für eine ältere Hauptversion der Bibliothek | Version prüfen, Dokumentation der eingesetzten Hauptversion verwenden |
+| Nach Anheben einer 0.x-Version brechen Zusatzmodule | Nebenversionen ohne Schnittstellenzusage | Version festschreiben, Migrationshinweise lesen, vollständiger Testlauf |
+| Freistellwerkzeug angekündigt, in der Sitzung nicht vorhanden | Connector verbunden, aber Werkzeug nicht geladen | zu Beginn feststellen und Rückfallweg nennen |
 | Stilvorlage nicht auffindbar | Produktname ohne Bild oder Link | Stil als Annahme kennzeichnen, Bild erbitten |
 | Fremder Baustein ohne Lizenzdatei | Lizenz nur im README genannt | vor Übernahme bestätigen lassen |

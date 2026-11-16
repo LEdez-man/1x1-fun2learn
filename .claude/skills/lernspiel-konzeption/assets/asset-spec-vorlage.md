@@ -54,6 +54,19 @@ Auftauchen: <Bewegung, Dauer>. Richtig: <Bewegung, Dauer, Effekt>. Falsch: <Bewe
 | Datei | Größe | Verwendung | Drehpunkt |
 |---|---|---|---|
 
+## 4a Modelle und Texturen (nur 2,5D und 3D)
+
+Einheiten: <Meter, Y nach oben>. Format: <glTF 2.0 als .glb>.
+
+| Datei | Inhalt | Dreiecke | Texturen (Größe) | Maßstab | Ursprung / Drehpunkt | Trefferkörper |
+|---|---|---|---|---|---|---|
+
+| Textur | Größe | Art (Farbe, Alpha, kachelbar) | Farbraum | Verwendung |
+|---|---|---|---|---|
+
+Billboards: <welche Figuren stehen als freigestellte Flächen im Raum; Größe in Metern>.
+Beschriftung der Ziele: <DOM über der Zeichenfläche / Billboard / Aufdruck>, Mindesthöhe am Bildschirm <px>.
+
 ## 5 Farbpalette
 
 | Verwendung | Hex |
@@ -73,7 +86,11 @@ Lichtrichtung: <von links>. Schattenseite: <rechts unten, abgedunkelt, schraffie
 | Entscheidung | Alternative | Begründung |
 |---|---|---|
 
-## 8 Herkunft und offene Punkte
+## 8 Stückliste, Herkunft und offene Punkte
+
+| Stück | Quelle | Urheber / Lizenz | Weg (Vektor, Freistellen nach Farbe, Segmentierung, in Ebenen zerlegt) | Werkzeug und Parameter | Kontrollbild abgenommen | Zustand |
+|---|---|---|---|---|---|---|
+
 
 - Herkunft: <wer, womit, KI-Unterstützung ja/nein, Bearbeitung>
 - Rechte: <Vorlage gemeinfrei? Lizenz fremder Teile? Urheberschaft dokumentiert?>

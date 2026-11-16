@@ -1,8 +1,11 @@
 # Grafik-Engine und Technikrahmen
 
 Inhalt: 1 Lehre aus dem Ausgangsprojekt · 2 Entscheidungsgrößen · 3 Optionen ·
-4 Entscheidungsweg · 5 Betriebsform · 6 Begleitentscheidungen · 7 Zusatzbibliotheken ·
-8 Was die Darstellungsschicht können muss
+4 Entscheidungsweg (2D, 2,5D, 3D) · 5 Betriebsform · 6 Begleitentscheidungen ·
+7 Zusatzbibliotheken · 8 Was die Darstellungsschicht können muss · 9 Versions- und
+Bibliotheksprüfung
+
+Für 3D und Mischformen zusätzlich `drei-d.md` lesen.
 
 ## 1 Lehre aus dem Ausgangsprojekt
 
@@ -27,7 +30,9 @@ Was das gekostet und gebracht hat:
   gegenprüfen.
 
 Folgerung: **Die Engine folgt dem Grafikstil und dem Weg, auf dem die Grafiken
-entstehen.** Beides vor der Wahl klären.
+entstehen.** Beides vor der Wahl klären. Das ist kein Urteil gegen 3D: Die 3D-Fassung
+scheiterte an fehlenden Modellen und am Stilwunsch, nicht an der Technik. Der Skill
+hält deshalb beide Wege offen (Abschnitt 4 und `drei-d.md`).
 
 ## 2 Entscheidungsgrößen
 
@@ -43,7 +48,7 @@ entstehen.** Beides vor der Wahl klären.
 
 ## 3 Optionen
 
-Versionen und Größen vor der Festlegung nachschlagen.
+Versionen, Größen und Pflegestand vor der Festlegung prüfen (Abschnitt 9).
 
 | Option | Geeignet für | Stärken | Preis |
 |---|---|---|---|
@@ -61,26 +66,38 @@ Vektorgrafik wird einmal gerastert oder als Texturatlas ausgeliefert und über W
 gezeichnet. WebGL ist weiterhin der stabile Standard; WebGPU bringt für solche Szenen
 keinen Vorteil.
 
-## 4 Entscheidungsweg
+## 4 Entscheidungsweg (2D, 2,5D, 3D)
 
 1. Gibt es eine Szene, oder genügt eine Oberfläche? Oberfläche → DOM/CSS/SVG.
-2. Braucht das Spiel räumliche Geometrie (Bewegung in die Tiefe, frei drehbare Sicht),
-   **und** liegen Modelle vor oder ist ihre Beschaffung geklärt? Nur dann 3D.
-   Tiefe allein lässt sich in 2D über Ebenen, Maßstabsstufen und eine Vordergrundfigur
-   darstellen.
-3. 2D: Reicht ein Treffertest, oder braucht es Physik, Kacheln, Kollision vieler
+2. Dimension je Szenario bestimmen:
+   - Tiefe ist nur Kulisse → **2D** (Ebenen, Maßstabsstufen, Vordergrundfigur).
+   - Bewegung in die Tiefe gehört zur Mechanik, Grafiken entstehen als Bilder →
+     **2,5D** (Raum und Kamera, Figuren als freigestellte Flächen).
+   - Drehung, Perspektive oder Physik im Raum tragen das Spiel, **und** Modelle liegen
+     vor oder ihre Herstellung ist geklärt → **3D**.
+3. Über alle absehbaren Szenarien zusammenzählen: nur eine Dimension → eine Engine.
+   Beide → Bauform nach `drei-d.md`, Abschnitt 2, wählen. In jedem Fall die dort
+   genannten acht Vorkehrungen einhalten, damit der andere Weg offen bleibt.
+4. 2D: Reicht ein Treffertest, oder braucht es Physik, Kacheln, Kollision vieler
    Objekte? Treffertest → Renderbibliothek mit eigenem schmalem Spielgerüst. Sonst
    Framework.
-4. Gegenprobe mit dem schwächsten Zielgerät und mit der Testumgebung.
-5. Ergebnis mit verworfener Alternative und Begründung ins Entscheidungsprotokoll.
+5. Kandidaten mit Abschnitt 9 prüfen (Version, Pflege, Lizenz, Einbindung).
+6. Gegenprobe mit dem schwächsten Zielgerät und mit der Testumgebung.
+7. Ergebnis mit verworfener Alternative und Begründung ins Entscheidungsprotokoll.
 
 Empfehlung für den häufigsten Fall (Übungsspiel, flächige Szenen, Grafiken als Ebenen,
 statischer Betrieb): PixiJS für die Szene, DOM für Menü, Aufgabenanzeige und
 Auswertung, eigenes Engine-Modul für Ebenen, Kamera, Geschosse, Partikel.
 
-Eine einzige Engine anstreben. Zwei nebeneinander nur als befristeter Übergang, mit
-gemeinsamer Schnittstelle zum Spielablauf und getrennten Zeichenflächen (nie zwei
-WebGL-Kontexte gleichzeitig sichtbar).
+Empfehlung für räumlich gedachte Mechanik ohne Modelle: 3D-Bibliothek mit
+freigestellten Bildern als Billboards (2,5D), Beschriftung als DOM-Element über der
+Zeichenfläche.
+
+Zwei Engines nebeneinander sind zulässig, wenn Szenarien beider Dimensionen gewollt
+sind; dann als bewusste Entscheidung mit gemeinsamem Darstellungsvertrag, getrennten
+Zeichenflächen (nie zwei WebGL-Kontexte gleichzeitig in Betrieb) und Bauanleitung und
+Tests für beide. Ungeplant nebeneinander gewachsene Engines sind dagegen ein
+Übergangszustand, der aufgelöst werden sollte.
 
 ## 5 Betriebsform
 
@@ -146,3 +163,65 @@ Mindestumfang eines 2D-Engine-Moduls für Ziel-und-Treffer-Spiele:
 - Partikel und Einblendungen
 - Rastern und Zwischenspeichern von Grafiken
 - von außen taktbare Schleife und Debug-Zugang für Tests
+
+## 9 Versions- und Bibliotheksprüfung
+
+Bibliotheken für Spiele im Browser ändern sich schnell; Angaben aus dem Gedächtnis
+und aus dieser Referenz sind beim Lesen womöglich überholt. Die Prüfung ist deshalb
+ein fester Schritt, kein Hinweis.
+
+**Wann**
+- vor jeder Engine-Entscheidung (Phase 3)
+- vor dem Bau eines neuen Szenarios in einem bestehenden Spiel
+- vor jedem Anheben einer eingesetzten Version
+- wenn eine Spezifikation älter als etwa sechs Monate ist
+
+**Schritt 1: Stand abrufen.** `scripts/bibliotheken-pruefen.py` fragt die npm-Registry
+ab und liefert je Paket neueste Version, Datum, Lizenz, Größe, Abkündigung und den
+Abstand zur eingesetzten Version:
+
+```
+python3 scripts/bibliotheken-pruefen.py --gruppe 2d 3d
+python3 scripts/bibliotheken-pruefen.py --nur-bestand --bestand pixi.js=8.23.0
+python3 scripts/bibliotheken-pruefen.py --paket <neuer-kandidat>
+```
+
+Ist die Registry nicht erreichbar, den Stand per Websuche oder aus der Dokumentation
+ermitteln und das so vermerken.
+
+**Schritt 2: Neue Kandidaten suchen.** Die Standardliste des Skripts ist ein
+Ausgangspunkt. Per Websuche prüfen, ob es für den Bedarf inzwischen geeignetere oder
+neue Bibliotheken gibt (Suchbegriffe: Bedarf plus „library“, „WebGL“, „WebGPU“,
+aktuelles Jahr; Vergleichsübersichten; Veröffentlichungshinweise der Kandidaten).
+Gefundene Namen mit `--paket` gegenprüfen.
+
+**Schritt 3: Eignung bewerten.** Je Kandidat, der in die engere Wahl kommt:
+
+| Kriterium | Frage |
+|---|---|
+| Pflege | letzte Version, Takt der Veröffentlichungen, offene schwere Fehler, Zahl der Betreuenden |
+| Schnittstellenzusage | Versionsschema; bei 0.x können Nebenversionen brechen |
+| Brüche | Migrationshinweise der letzten Hauptversion gelesen; was ändert sich am eigenen Code |
+| Lizenz | MIT, Apache-2.0, BSD u. ä. unkritisch; anderes prüfen; Lizenzdatei beilegen |
+| Einbindung | als ES-Modul ohne Build verwendbar? Zusatzmodule und Decoder? ausgelieferte Dateigröße (nicht die Paketgröße) |
+| Darstellung | WebGL als stabiler Weg vorhanden; Stand von WebGPU in der Bibliothek und in den Zielbrowsern nachschlagen, nicht voraussetzen |
+| Prüfbarkeit | läuft im Headless-Browser mit Software-Renderer; Schleife von außen taktbar |
+| Zielgeräte | Touch, Tablets, ältere Browser laut Dokumentation |
+| Dokumentation | aktuelle Anleitung für die gewählte Hauptversion; viele Beispiele im Netz gelten für ältere Versionen |
+| Verbreitung | genug Beispiele und Antworten, auch für KI-gestützte Weiterarbeit |
+
+**Schritt 4: Festhalten.** In der Spezifikation eine Tabelle „Bibliotheksstand“ führen:
+Paket, eingesetzte Version, neueste Version, geprüft am, Entscheidung (bleiben,
+anheben, ersetzen) mit Begründung. Das Datum gehört in die Kopfzeile der Spezifikation.
+
+**Regeln für das Anheben**
+- Version festschreiben (Dateiname oder Kommentar in der Import-Map), nie „latest“.
+- Korrekturversionen nach Lektüre des Änderungsprotokolls; Haupt- und 0.x-Neben-
+  versionen als eigenes Vorhaben mit vollständigem Testlauf und Sichtprüfung.
+- Sehr neue Hauptversionen einige Wochen beobachten, wenn kein Grund zur Eile besteht.
+- Kein Anheben ohne Anlass: Sicherheitskorrektur, benötigte Funktion, Ende der Pflege.
+- Nach dem Anheben: Lizenzdatei, Spezifikation, Changelog und `AGENTS.md` nachführen.
+
+**Auch für Werkzeuge**: Testwerkzeug (Playwright), Freistell- und Bildwerkzeuge,
+Modellwerkzeuge. Für Werkzeuge der Sitzung (Connectoren, Skills) gilt die Prüfung
+sinngemäß: nachsehen, was heute verfügbar ist (`texturen-und-sprites.md`, Abschnitt 1).

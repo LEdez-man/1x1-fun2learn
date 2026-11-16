@@ -27,7 +27,41 @@ Regeln:
   Spielablauf. Was nur eines betrifft, bleibt im Szenario.
 - Bauteile, die zwei Szenarien teilen, in ein gemeinsames Modul (`scenarios/shared/`).
 
-## 2 Szenario-Schnittstelle
+## 2 Darstellungsvertrag und Szenario-Schnittstelle
+
+Der Vertrag zwischen Spielablauf und Darstellung ist für 2D und 3D derselbe. Er ist die
+Vorkehrung, die beide Dimensionen nebeneinander oder nacheinander möglich macht
+(`drei-d.md`, Abschnitt 2).
+
+```js
+// Engine, gleich für 2D und 3D
+engine.load(scenario)            // Szenario vollständig laden
+engine.shoot(screenPoint)        // Schuss oder Zugriff am Bildschirmpunkt
+engine.toScreen(worldPoint)      // für Einblendungen am Ziel
+engine.onHit(target, point)      // Treffer melden
+engine.onFrame(dt)               // Bild-Ereignis
+engine.timeScale, engine.paused  // Zeitlupe, Pause
+engine.stop(), engine.step(dt)   // Schleife von außen takten (Tests)
+engine.dispose()
+
+// Ziel, gleich für 2D und 3D
+target.screenRect()              // Rechteck am Bildschirm: Sichtbarkeit, Lesbarkeit, Tests
+target.hitTest(...)              // 2D: Punkt und Radius; 3D: Strecke und Radius
+target.hittable, target.data, target.state
+```
+
+Die Registrierung eines Szenarios nennt seine Dimension (`dim: '2d' | '3d'`); danach
+wird die Engine gewählt. Der gemeinsame Teil der Szenario-Schnittstelle (`build`,
+`spawnWave`, `resolve`, `dismiss`, `waveDone`, `update`, `intermission`, `dispose`) ist
+in beiden Dimensionen gleich. Verschieden sind nur die Angaben zu Kamera und Schuss:
+
+| | 2D | 3D / 2,5D |
+|---|---|---|
+| Raum | `design` (Raster), Ebenen mit Parallaxfaktor | Szenengraph, Einheiten in Metern |
+| Kamera | `pan` (Schwenk, Zielzone, Ebenenbreite) | `sway` (Gier, Nicken), Sichtfeld |
+| Schuss | Flugzeit, Bogen, Ursprung; `ballistics(to)` | Geschwindigkeit, Reichweite, Radius; optional Schwerkraft, Widerstand, Zeitschritt |
+| Ziel | `center` in Sichtkoordinaten, `z`, `f` | `center` als Vektor, Trefferkörper |
+| Zusätze | `depthAt(y)` | `groundAt(x, z)` |
 
 Erprobte Form für Ziel-und-Treffer-Spiele in 2D:
 
@@ -81,7 +115,9 @@ Die Schnittstelle erst nach dem zweiten Szenario als stabil betrachten.
 | Weitere Sprachen | Texte der Oberfläche gesammelt, nicht im Code verstreut |
 | Ballistik, Physik | Schalter im Menü; fester Zeitschritt; optionale Felder je Schuss |
 | Ruhiger Modus | Reizstufe als Einstellung, die jedes Szenario abfragt |
-| Andere Engine | schmale Verbindung zum Spielablauf (Abschnitt 1) |
+| Andere Engine, zweite Dimension (2D ↔ 3D) | Darstellungsvertrag (Abschnitt 2), Ziele über `screenRect()` beschrieben, Dimension in der Registrierung, dimensionsneutrale Grafiken (`drei-d.md`) |
+| Neue Bibliotheksversionen | Version festgeschrieben, Tabelle „Bibliotheksstand“ mit Prüfdatum, vollständiger Testlauf als Voraussetzung für das Anheben |
+| Neue oder ersetzte Grafiken | Quelle unverändert, Ableitung und Freistellung per Skript, Dateinamen und Maße als Schnittstelle |
 
 Maß halten: Vorkehrung heißt Platz im Datenformat und eine saubere Schnittstelle, nicht
 die vorgezogene Umsetzung.
@@ -140,7 +176,8 @@ Vorlagen: `assets/spec-vorlage.md`, `assets/asset-spec-vorlage.md`,
 
 **Neues Szenario**
 1. Lesen: Spezifikation (Begriffe, Spiellogik, Bauanleitung, Entscheidungen), Vorbild,
-   offene Issues.
+   offene Issues. Bibliotheksstand prüfen (`grafik-engine.md`, Abschnitt 9) und
+   Dimension des Szenarios bestimmen.
 2. Klären: fehlende Vorgaben beim Auftraggeber erfragen, bevor gebaut wird.
 3. Bauen: eigene Datei, Registrierung; Kernmodule nur ändern, wenn es alle betrifft.
 4. Prüfen: Sichtbarkeit automatisiert, komplette Runde, Bildschirmfotos sichten;

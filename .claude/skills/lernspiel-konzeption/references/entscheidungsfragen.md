@@ -137,10 +137,25 @@ Schrift festlegen.
 
 **C5 Herkunft der Grafiken.**
 - Vom Auftraggeber geliefert (haben Vorrang, bleiben unverändert, Ableitungen per Skript).
-- Per Skript gezeichnete Vektorgrafik (reproduzierbar, später ersetzbar).
-- Bildgenerator. Für deckungsgleiche transparente Ebenen und mehrere stimmige Figuren
-  mit gemeinsamem Drehpunkt wenig geeignet.
-- Freie Bibliotheken (Lizenz prüfen und nachweisen).
+- Per Skript gezeichnete Vektorgrafik (reproduzierbar, später ersetzbar, kein
+  Freistellen nötig).
+- Rasterbilder aus Design-Werkzeug, Scan, Foto oder Bildgenerator, die freigestellt
+  werden. Für Einzelmotive und Texturen geeignet; für deckungsgleiche transparente
+  Ebenen und mehrere stimmige Figuren mit gemeinsamem Drehpunkt braucht es klare
+  Vorgaben und Nacharbeit.
+- Freie Bibliotheken für Sprites, Texturen, Modelle (Lizenz je Stück nachweisen).
+- 3D-Modelle: vorhanden, zu beschaffen oder zu modellieren? Ohne Antwort kein 3D.
+
+**C5a Freistellen und Aufbereiten.** Vorher feststellen, welche Werkzeuge die Sitzung
+bietet, und nur diese anbieten.
+- Freistellwerkzeug des Design-Connectors, danach Aufbereitung und Kontrollbild per
+  Skript (Empfehlung für Fotos und unruhige Hintergründe, wenn der Connector es bietet).
+- `scripts/freistellen.py` nach Farbe (Empfehlung für Zeichnungen auf einfarbigem Grund).
+- Segmentierung lokal (`rembg`), wenn installierbar.
+- Der Auftraggeber stellt selbst frei und liefert PNG mit Transparenz; das Skript
+  bereitet auf und prüft.
+Dazu klären: Wer nimmt die Kontrollbilder ab? Sollen Sprites zu einem Atlas gepackt
+werden (Empfehlung: erst ab einigen Dutzend)?
 
 **C6 Bewegung und Reizdichte.** Lebendige Kulisse mit langsamer Bewegung außerhalb der
 Trefferflächen (Empfehlung) oder ruhige Kulisse. Ruhiger Modus und reduzierte Bewegung
@@ -158,16 +173,46 @@ Lizenznachweis; Sprachausgabe als abschaltbare Option, Standard aus.
   Asset-Pipeline.
 - Installierbare App oder Engine-Export (Godot, Unity).
 
-**D2 Darstellung.** Empfehlung aus `grafik-engine.md` ableiten und mit zwei Alternativen
-vorlegen. Kurzform der Zuordnung:
+**D2 Dimension.** „Wie räumlich ist das Spiel?“ Je Szenario beantworten.
+- 2D: Ebenen mit Parallaxe, Figuren als Ausschneidebilder (Empfehlung, wenn Tiefe nur
+  Kulisse ist und Grafiken als Ebenen entstehen).
+- 2,5D: Raum und Kamera, Figuren und Kulissenteile als freigestellte Bilder
+  (Empfehlung, wenn Bewegung in die Tiefe zur Mechanik gehört und keine Modelle
+  vorliegen).
+- 3D: Modelle mit Material und Licht. Nur, wenn Modelle vorhanden sind oder ihre
+  Herstellung geklärt ist.
+- Noch offen: beide Wege vorsehen. Dann die acht Vorkehrungen aus `drei-d.md` in die
+  Spezifikation aufnehmen und mit der Dimension des ersten Szenarios beginnen.
+
+**D2a Bauform bei 2D und 3D im selben Spiel.**
+- Eine Engine je Spiel, Wechsel über den Darstellungsvertrag möglich (Empfehlung,
+  solange kein Szenario der anderen Dimension ansteht).
+- Zwei Engines hinter einem Vertrag, das Szenario wählt. Wenn beide Dimensionen fest
+  geplant sind.
+- Eine 3D-Bibliothek für alles, 2D-Szenen als Flächen vor orthografischer Kamera.
+  Wenn 2,5D der Schwerpunkt ist.
+
+**D2b Bibliothek.** Empfehlung aus `grafik-engine.md` ableiten und mit zwei
+Alternativen vorlegen, nach der Versions- und Bibliotheksprüfung (D5). Kurzform der
+Zuordnung:
 - Oberfläche ohne Szene → DOM, CSS, SVG.
 - 2D-Szene in Ebenen, viele Sprites, Partikel → 2D-Renderbibliothek (PixiJS).
 - 2D mit Physik, Kacheln, vielen Spielobjekten und Szenenverwaltung → Spiel-Framework
   (Phaser).
-- Echte räumliche Bewegung und vorhandene Modelle → 3D-Bibliothek (three.js, Babylon.js).
+- 2,5D und 3D → 3D-Bibliothek (three.js) oder 3D-Engine (Babylon.js, PlayCanvas).
 
 **D3 Zielgeräte und Leistung.** Schwächstes Gerät benennen (Büro-Laptop mit integrierter
 Grafik, Mittelklasse-Tablet). Daran wird gemessen.
+
+**D5 Versions- und Bibliotheksprüfung.** Keine Frage an den Auftraggeber, sondern ein
+Arbeitsschritt vor D2b, dessen Ergebnis vorgelegt wird: Tabelle „Bibliotheksstand“ aus
+`scripts/bibliotheken-pruefen.py` und Websuche (neueste Version, Datum, Lizenz,
+Pflege, Auffälligkeiten, neue Kandidaten). Nachfragen nur bei echten Weichen:
+- Eine neue Hauptversion ist erst wenige Wochen alt: neueste nehmen oder die
+  vorherige, bewährte (Empfehlung bei laufendem Spiel: bewährte)?
+- Ein eingesetztes Paket wird nicht mehr gepflegt: ersetzen oder festschreiben?
+- Wie oft soll der Stand künftig geprüft werden (Empfehlung: vor jedem neuen Szenario
+  und mindestens halbjährlich)?
 
 **D4 Speicherung.** Lokal im Browser mit Export und Import als Datei (Empfehlung für
 statische Seiten; kein Konto, keine personenbezogenen Daten auf einem Server); Server
@@ -227,8 +272,11 @@ geschieht bei richtig, falsch und durchgelassen?
 (andere Eingabe, eigene Lebensanzeige, mehr Antworten je Aufgabe, Physik)? Jede
 Abweichung als optionale Erweiterung der Schnittstelle planen, bestehende Szenarien
 bleiben unverändert.
-**S3 Grafiken.** Liegen Grafiken vor, in welchem Format? Sonst Asset-Spezifikation
-erstellen.
+**S3 Grafiken.** Liegen Grafiken vor, in welchem Format? Was muss freigestellt werden
+(C5a)? Sonst Asset-Spezifikation mit Stückliste erstellen.
+**S3a Dimension und Bibliotheksstand.** Passt das Szenario zur vorhandenen Dimension
+(D2)? Wenn nicht: Bauform nach D2a entscheiden, bevor geplant wird. Eingesetzte
+Bibliotheken mit `scripts/bibliotheken-pruefen.py --nur-bestand --bestand …` prüfen.
 **S4 Zwischenrunde.** Verdeckendes Ereignis, Verlauf der Stimmung über die Etappen,
 neues Detail je Etappe.
 **S5 Gemeinsame Bausteine.** Teilt das Szenario Bauteile mit einem anderen geplanten

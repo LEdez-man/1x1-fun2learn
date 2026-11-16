@@ -5,7 +5,8 @@
 | **Version** | <0.0.0 (Konzept)> |
 | **Datum** | <JJJJ-MM-TT> |
 | **Status** | <was ist umgesetzt, was nur spezifiziert> |
-| **Technik** | <Betriebsform, Darstellung, Bibliotheken mit Version, Ablageort> |
+| **Technik** | <Betriebsform, Dimension (2D / 2,5D / 3D), Bibliotheken mit Version, Ablageort> |
+| **Bibliotheksstand geprüft am** | <JJJJ-MM-TT> (Abschnitt 8.3) |
 
 Dieses Dokument ist die verbindliche Beschreibung des Spiels für Menschen und für
 Werkzeuge, die daran weiterarbeiten. Abschnitte 1–8 beschreiben den **umgesetzten**
@@ -79,8 +80,9 @@ Einschränkungen und Annahmen ausdrücklich nennen.
 
 ### 7.1 <Szenario> (`<Datei>`)
 
-**Grafiken.** <Ordner, Herkunft, Stil>
-**Ebenen.** <Liste hinten → vorn mit Parallaxfaktor>
+**Dimension.** <2D / 2,5D / 3D>
+**Grafiken.** <Ordner, Herkunft, Stil, Freistellweg>
+**Ebenen bzw. Szenenaufbau.** <2D: Liste hinten → vorn mit Parallaxfaktor; 3D: Bühne, Kamera, Sichtfeld, Modelle>
 **Ziele.** <Art, Träger der Antwort, Trefferflächen, Platzierung>
 **Rückmeldung.** <richtig, falsch, freier Abruf>
 **Erzeugte Bewegung.**
@@ -106,6 +108,19 @@ Checkliste für die Übertragung · Schalter für Geschick>
 |---|---|---|
 
 Nicht geprüft: <echte Hardware, Ton, …>
+
+### 8.3 Bibliotheksstand
+
+| Paket | eingesetzt | neueste | geprüft am | Lizenz | Entscheidung und Begründung |
+|---|---|---|---|---|---|
+
+Nächste Prüfung: <vor dem nächsten Szenario, spätestens JJJJ-MM>.
+
+### 8.4 Darstellungsvertrag und Dimension
+
+<Funktionen zwischen Spielablauf und Engine; Dimension je Szenario; Einheiten und
+Koordinaten; gewählte Bauform (eine Engine / zwei Engines / eine 3D-Bibliothek für
+alles); was für die jeweils andere Dimension vorgehalten ist.>
 
 ## 9 Geplant (noch nicht umgesetzt)
 

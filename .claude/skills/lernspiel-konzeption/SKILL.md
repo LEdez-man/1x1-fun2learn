@@ -1,6 +1,6 @@
 ---
 name: lernspiel-konzeption
-description: Konzipiert Lernspiele (Serious Games, Game-based Learning, Übungs- und Drill-Spiele) von Grund auf über geführte Entscheidungsfragen mit begründeten Vorschlägen. Deckt ab – Einstieg über Spiellogik oder über Design, Lernlogik und Rückmeldung, Grafik-Engine-Entscheidung (DOM/SVG, Canvas, PixiJS, Phaser, three.js u. a.), Architektur und Erweiterbarkeit, Asset-Spezifikation, Prüfung, Barrierefreiheit und Rechte. Ergebnis ist eine Spezifikation mit Entscheidungsprotokoll und Issue-Backlog. Immer verwenden, wenn ein neues Lernspiel, Übungsspiel, ein Rechen-, Vokabel-, Lese- oder Rechtschreibtrainer, eine spielerische Lern-App oder ein neues Szenario bzw. eine neue Spielmechanik für ein bestehendes Lernspiel geplant, entworfen oder „von Grund auf“ aufgesetzt werden soll, auch wenn nur eine Spielidee genannt wird oder nach der passenden Engine, Architektur oder Erweiterbarkeit gefragt wird. Nicht für reine Fehlerbehebung in einem fertigen Spiel.
+description: Konzipiert Lernspiele (Serious Games, Game-based Learning, Übungs- und Drill-Spiele) von Grund auf über geführte Entscheidungsfragen mit begründeten Vorschlägen. Deckt ab – Einstieg über Spiellogik oder über Design, Lernlogik und Rückmeldung, Grafik-Engine-Entscheidung für 2D, 2,5D und 3D (DOM/SVG, Canvas, PixiJS, Phaser, three.js u. a.) mit Prüfung aktueller Versionen und geeigneter Bibliotheken, Architektur und Erweiterbarkeit, Asset-Spezifikation, Herstellung von Sprites und Texturen einschließlich Freistellen, Prüfung, Barrierefreiheit und Rechte. Ergebnis ist eine Spezifikation mit Entscheidungsprotokoll und Issue-Backlog. Immer verwenden, wenn ein neues Lernspiel, Übungsspiel, ein Rechen-, Vokabel-, Lese- oder Rechtschreibtrainer, eine spielerische Lern-App oder ein neues Szenario bzw. eine neue Spielmechanik für ein bestehendes Lernspiel geplant, entworfen oder „von Grund auf“ aufgesetzt werden soll, auch wenn nur eine Spielidee genannt wird oder nach der passenden Engine, 2D oder 3D, Bibliotheksversionen, Architektur, Erweiterbarkeit oder dem Freistellen von Spielgrafiken gefragt wird. Nicht für reine Fehlerbehebung in einem fertigen Spiel.
 ---
 
 # Lernspiel-Konzeption
@@ -31,10 +31,10 @@ Web-Spielearchitektur. Daraus folgt für jede Phase:
 
 | Phase | Inhalt | Referenz |
 |---|---|---|
-| 0 | Bestand sichten | – |
+| 0 | Bestand und Werkzeuge der Sitzung sichten | `references/texturen-und-sprites.md` (Abschnitt 1) |
 | 1 | Startfragen: Rahmen und Einstieg (Spiellogik zuerst oder Design zuerst) | `references/entscheidungsfragen.md` |
-| 2 | Hauptteil in der gewählten Reihenfolge: Spiellogik ↔ Design | `references/spiellogik.md`, `references/design-und-assets.md` |
-| 3 | Grafik-Engine und Technikrahmen | `references/grafik-engine.md` |
+| 2 | Hauptteil in der gewählten Reihenfolge: Spiellogik ↔ Design, Herstellung der Grafiken | `references/spiellogik.md`, `references/design-und-assets.md`, `references/texturen-und-sprites.md` |
+| 3 | Dimension (2D, 2,5D, 3D), Grafik-Engine, Versions- und Bibliotheksprüfung | `references/grafik-engine.md`, `references/drei-d.md`, `scripts/bibliotheken-pruefen.py` |
 | 4 | Architektur und Erweiterbarkeit | `references/erweiterbarkeit.md` |
 | 5 | Prüfung, Barrierefreiheit, Rechte | `references/qualitaet-und-tests.md` |
 | 6 | Ergebnisdokumente | `assets/` |
@@ -62,7 +62,7 @@ davon, womit begonnen wurde.
 - Der vollständige Fragenkatalog mit Optionen und Empfehlungen steht in
   `references/entscheidungsfragen.md`. Vor Phase 1 lesen.
 
-## Phase 0: Bestand sichten
+## Phase 0: Bestand und Werkzeuge sichten
 
 Vor der ersten Frage prüfen, was vorliegt: Repository mit `spec.md`, `AGENTS.md`,
 Entscheidungsprotokoll, offene Issues; gelieferte Grafiken; frühere Spiele des
@@ -71,6 +71,13 @@ um ein weiteres Szenario, gelten dessen Spezifikation und Entscheidungen. Dann n
 Fragen stellen, die das Szenario betreffen (Fragenkatalog, Block S), und Pläne gegen das
 Entscheidungsprotokoll prüfen: Ein älterer Plan kann durch eine spätere
 Technikentscheidung überholt sein.
+
+Außerdem feststellen, welche Design-Werkzeuge die Sitzung bietet (Design-Connector wie
+Canva und dessen tatsächlich geladene Werkzeuge, Design- und Bild-Skills,
+Bildgenerator, lokale Bildwerkzeuge). Davon hängt ab, wie Sprites und Texturen
+entstehen können; Reihenfolge und Rückfallwege stehen in
+`references/texturen-und-sprites.md`, Abschnitt 1. Kein Werkzeug als verfügbar
+nennen, das in der Sitzung nicht zu sehen ist.
 
 ## Phase 1: Startfragen
 
@@ -116,23 +123,53 @@ Perspektive, Art der Ziele, Lesbarkeit der Lerninhalte, Herkunft der Grafiken,
 Asset-Format (Fragenkatalog, Block C). Ergebnis ist eine Asset-Spezifikation nach
 `assets/asset-spec-vorlage.md`.
 
+**Herstellung der Grafiken** (`references/texturen-und-sprites.md` lesen): Stückliste
+aller Ebenen, Figuren, Requisiten und Texturen mit Quelle und Zustand; je Stück der Weg
+(als Vektor zeichnen, nach Farbe freistellen, durch Segmentierung freistellen, in
+Ebenen zerlegen). Freistellen und Aufbereiten laufen über das Freistellwerkzeug des
+Design-Connectors, wenn die Sitzung eines bietet, sonst über
+`scripts/freistellen.py` (Kante säubern, Farbe ausbluten, beschneiden, Kontrollbild
+auf hellem, dunklem und kariertem Grund, Kennzahlen). Jedes Ergebnis wird am
+Kontrollbild abgenommen, bevor es eingebaut wird.
+
 Typische Lücken in dieser Phase: Lernphase verwechselt (Automatisieren ohne vorheriges
 Verstehen), Zeitdruck als Standard, Bestrafung von Fehlern durch die Spielmechanik,
 Reaktionszeit durch Animationen verfälscht, Lerninhalt in der Szene schlecht lesbar,
-Altersangemessenheit des Themas, Bildrechte.
+Altersangemessenheit des Themas, Bildrechte, Kulisse als ein Bild geliefert statt in
+Ebenen, Farbsäume an freigestellten Figuren, fehlende Herkunftsangaben.
 
-## Phase 3: Grafik-Engine
+## Phase 3: Dimension, Grafik-Engine, Bibliotheksstand
 
-`references/grafik-engine.md` lesen. Die Entscheidung wird aus vier bereits geklärten
-Größen abgeleitet: Grafikstil und Perspektive, Herkunft der Grafiken, Zielgeräte,
-Betriebsform (statisch ohne Build-Schritt oder mit Werkzeugkette). Dem Auftraggeber eine
-Empfehlung mit zwei Alternativen vorlegen, jeweils mit dem Preis der Entscheidung
-(Fragenkatalog, Block D). Vor der Festlegung die aktuelle Version und den Pflegestand
-der Bibliothek nachschlagen; die Angaben in der Referenz sind ein Stand, kein Dauerwert.
+`references/grafik-engine.md` lesen; kommt 3D oder eine Mischform in Frage oder will
+der Auftraggeber beide Wege offenhalten, zusätzlich `references/drei-d.md`.
 
-Typische Lücken: 3D gewählt, obwohl keine Modelle vorliegen; zwei Engines nebeneinander
-als Dauerzustand; Bundler ohne Bedarf; Leistung nur auf dem Entwicklungsrechner
-betrachtet; Prüfbarkeit im Headless-Browser nicht bedacht.
+1. **Dimension je Szenario**: 2D (Tiefe ist Kulisse), 2,5D (Bewegung in die Tiefe,
+   Figuren als freigestellte Bilder im Raum) oder 3D (Modelle vorhanden, Raum trägt die
+   Mechanik). Über alle absehbaren Szenarien zusammenzählen.
+2. **Bauform**: eine Engine je Spiel, zwei Engines hinter einem gemeinsamen
+   Darstellungsvertrag oder eine 3D-Bibliothek für alles. Unabhängig von der Wahl die
+   acht Vorkehrungen aus `drei-d.md`, Abschnitt 2, in die Spezifikation aufnehmen
+   (Lernkern ohne Bezug zur Darstellung, Darstellungsvertrag, Ziele über
+   Bildschirmgrößen beschrieben, Dimension in der Registrierung, eine sichtbare
+   Zeichenfläche, dimensionsneutrale Grafiken, festgelegte Einheiten, fester
+   Zeitschritt). Sie halten 2D und 3D nebeneinander und nacheinander möglich.
+3. **Versions- und Bibliotheksprüfung** (fester Schritt, `grafik-engine.md`,
+   Abschnitt 9): `scripts/bibliotheken-pruefen.py` ausführen, per Websuche nach neuen
+   oder geeigneteren Bibliotheken suchen, Kandidaten nach Pflege, Schnittstellenzusage,
+   Lizenz, Einbindung und Prüfbarkeit bewerten, Ergebnis mit Datum als Tabelle
+   „Bibliotheksstand“ in die Spezifikation schreiben. Dieselbe Prüfung steht vor jedem
+   neuen Szenario und vor jedem Anheben einer Version.
+4. **Vorlage an den Auftraggeber**: Empfehlung mit zwei Alternativen, jeweils mit dem
+   Preis der Entscheidung (Fragenkatalog, Block D).
+
+Die Entscheidung wird aus bereits geklärten Größen abgeleitet: Grafikstil und
+Perspektive, Herkunft der Grafiken und Modelle, Mechanik, Zielgeräte, Betriebsform.
+
+Typische Lücken: 3D gewählt, obwohl keine Modelle vorliegen; räumliche Idee in ein
+2D-Schema gezwungen, obwohl 2,5D passt; zwei Engines ungeplant nebeneinander;
+Versionsangaben aus dem Gedächtnis; Beispiele aus dem Netz für eine ältere
+Hauptversion; Bundler ohne Bedarf; Leistung nur auf dem Entwicklungsrechner
+betrachtet; Prüfbarkeit im Headless-Browser nicht bedacht; Schrift im Raum zu klein.
 
 ## Phase 4: Architektur und Erweiterbarkeit
 
@@ -161,8 +198,8 @@ angelegt werden soll. Issues erst nach ausdrücklicher Bestätigung anlegen.
 
 | Dokument | Vorlage | Inhalt |
 |---|---|---|
-| Spezifikation | `assets/spec-vorlage.md` | Ziel, Begriffe, Spiellogik, Szenarien, Architektur, Planung, fachliche Einordnung, Entscheidungsprotokoll, Leitfaden für die Weiterarbeit |
-| Asset-Spezifikation | `assets/asset-spec-vorlage.md` | Ebenen, Figuren, Trefferflächen, Palette, Lieferformat |
+| Spezifikation | `assets/spec-vorlage.md` | Ziel, Begriffe, Spiellogik, Szenarien, Architektur mit Darstellungsvertrag und Bibliotheksstand, Planung, fachliche Einordnung, Entscheidungsprotokoll, Leitfaden für die Weiterarbeit |
+| Asset-Spezifikation | `assets/asset-spec-vorlage.md` | Ebenen, Figuren, Modelle und Texturen, Trefferflächen, Palette, Lieferformat, Stückliste mit Herkunft und Freistellweg |
 | Backlog | `assets/issue-vorlage.md` | je Szenario und Erweiterung ein Issue mit Anforderungen (M/S/K) und Abnahmekriterien |
 | Einstieg für KI-Werkzeuge | in der Spezifikationsvorlage beschrieben | `AGENTS.md` mit Kurzregeln und Verweis auf die Spezifikation |
 
@@ -193,10 +230,15 @@ Ausgangsprojekt jeweils Nacharbeit gekostet hat:
 4. Geschicklichkeit und Lernleistung trennbar halten (Schalter für Ballistik, Tempo,
    Zeitlimit). Gemessene Reaktionszeit beginnt nach Ansage und Einblendung und endet
    mit der Handlung, nicht mit dem Ende einer Animation.
-5. Die Engine folgt dem Grafikstil und dem Weg, auf dem Grafiken entstehen.
+5. Die Engine folgt dem Grafikstil und dem Weg, auf dem Grafiken entstehen. 2D und 3D
+   bleiben beide möglich, solange der Lernkern die Darstellung nicht kennt.
 6. Lernlogik liegt außerhalb der Szenarien. Ein Szenario stellt dar und meldet Treffer,
    es wertet nicht.
 7. Jede Entscheidung mit verworfener Alternative und Begründung festhalten; überholte
    Entscheidungen nicht löschen, sondern als überholt markieren.
 8. Ungeprüftes benennen (echte Hardware, Ton, Dateidialoge), statt es stillschweigend
    als erledigt zu führen.
+9. Versionen und Eignung von Bibliotheken werden nachgeschlagen und mit Datum
+   festgehalten, nicht erinnert.
+10. Keine freigestellte Grafik ohne Kontrollbild auf hellem und dunklem Grund und ohne
+    Herkunftsangabe.
