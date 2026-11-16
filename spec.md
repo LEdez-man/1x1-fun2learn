@@ -419,6 +419,7 @@ Jeder Punkt ist als GitHub-Issue angelegt.
 | **UFO-Abwehr** | Nachtszene im Stil alter Atari-/Sega-Spiele. Sicht einer bodengestützten Ionenkanone (Lichtkanone/Railgun) auf UFOs mit unterschiedlichen Umrissen. Wird das richtige Ergebnis nicht innerhalb der Frist (einstellbar, z. B. 5–30 s) getroffen, landet das Raumschiff und ein Alien steigt bedrohlich aus. |
 | **Fischteich** | Seitenansicht eines kleinen Teichs in der Anmutung eines hochwertigen Unterwasser-Bildschirmschoners. Verschiedene Fische tragen die Ergebnisse; der richtige wird mit einem kleinen Kescher gefangen. Falsche Fische springen zappelnd wieder heraus. Richtige Fische landen oberirdisch im Räucherofen (Duftschwaden). |
 | **Luftgewehr-Schießstand** | Jahrmarktbude: Field Targets (z. B. Plastikröhrchen), Laufkasten mit Wildschwein, Bär, Reh, Hirsch, Dachs, Fuchs; Enten auf einem Transportband. |
+| **Neon-Arena** | Schaumpfeil-Schießbahn mit 5 oder 6 parallelen Bahnen, auf denen Boxen mit Ergebnissen wie ein Scheibenzug auf die Theke zurollen; Ballistik, Belohnungszonen nach Reaktionszeit, Dart-Vorrat als Leben, Ballon und Blase als Nachschub. Planung: [docs/neon-arena/README.md](docs/neon-arena/README.md), Issue #18 (Sprachausgabe: #19, #20; gemeinsame Basis mit Luftgewehr-Schießstand, #4). |
 | **Ballon-Zwille** | Freizeitpark mit Hüpfburgenland; farbige Luftballons steigen auf und werden mit der Steinschleuder getroffen. |
 
 ### 9.2 Spiellogik und Rahmen

@@ -39,6 +39,7 @@ Geplante Szenarien und Erweiterungen stehen in [spec.md](spec.md), Abschnitt 9, 
 | [spec.md](spec.md) | Spezifikation: Spiellogik, Menü, Szenarien, Architektur, Planung |
 | [CHANGELOG.md](CHANGELOG.md) | Versionshistorie |
 | [assets/schneeball-bruegel/spec.md](assets/schneeball-bruegel/spec.md) | Asset-Spezifikation der Schneeballschlacht |
+| [docs/neon-arena/README.md](docs/neon-arena/README.md) | Planung und Designvorgaben Szenario „Neon-Arena“ (Schaumpfeil-Schießbahn), Anforderungskatalog dort |
 | [data/profile.schema.json](data/profile.schema.json) | Datenformat für Spieler, Fortschritt und Statistik |
 | [data/beispiel-profil.json](data/beispiel-profil.json) | Beispiel einer Profildatei |
 
